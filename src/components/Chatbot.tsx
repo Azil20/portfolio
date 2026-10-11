@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useMemo } from 'react';
+import React, { useRef, useState, useEffect, useMemo, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Environment, Sphere, Box, Torus, Cylinder } from '@react-three/drei';
 import * as THREE from 'three';
@@ -1168,7 +1168,9 @@ export default function Chatbot() {
           <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
             <ambientLight intensity={1} />
             <directionalLight position={[10, 10, 10]} intensity={2} />
-            <Environment preset="studio" />
+            <Suspense fallback={null}>
+              <Environment preset="studio" />
+            </Suspense>
             <Face
               mousePosRef={mousePosRef}
               sleepStage={sleepStage}
