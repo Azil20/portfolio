@@ -1,0 +1,242 @@
+{
+  "nav": {
+    "experiences": "Parcours",
+    "projects": "Projets",
+    "skills": "Compétences",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "lang_toggle": "EN",
+    "lang_tooltip": "Switch to English"
+  },
+  "hero": {
+    "status": "Recherche de Stage PFE (Début Février 2027) • Master 2 Big Data & IA",
+    "description": "Étudiant en dernière année de Master (M2) Big Data, Intelligence Artificielle et Applications Avancées à l’Université Ibn Tofaïl (FSK Kénitra). Spécialisé dans la conception de modèles de Machine Learning, NLP et architectures de données distribuées.",
+    "explore": "Explorer les Projets",
+    "contact": "Me Contacter"
+  },
+  "journey": {
+    "eyebrow": "01 / Parcours",
+    "title": "Formations & Expériences",
+    "description": "Rigueur académique en Master 2 Big Data & IA à l'Université Ibn Tofaïl (FSK) couplée à une solide pratique en administration systèmes, réseaux et génie logiciel.",
+    "filters": {
+      "all": "Tout le Parcours",
+      "education": "Formations",
+      "internship": "Expériences & Stages"
+    },
+    "items": {
+      "m2": {
+        "categoryLabel": "Formation (M2)",
+        "period": "2024 — Présent",
+        "role": "Master Big Data, Intelligence Artificielle et Applications Avancées (M2)",
+        "institution": "Faculté des Sciences (FSK), Université Ibn Tofaïl — Kénitra",
+        "description": "Conception avancée de modèles de Machine Learning, Deep Learning, NLP (Transformers) et architectures de données. Calcul distribué et parallèle avec Hadoop et Spark, développement de pipelines d’IA avec PyTorch et Scikit-Learn.",
+        "pfeSkill": "Recherche PFE 2027"
+      },
+      "abhoer": {
+        "categoryLabel": "Stage Professionnel",
+        "period": "Mai 2024 — Juin 2024",
+        "role": "Stagiaire Systèmes et Réseaux Informatiques",
+        "institution": "Agence du Bassin Hydraulique de l’Oum Er-Rbia (ABHOER) — Béni Mellal",
+        "description": "Administration et configuration d’un environnement Windows Server 2012 (Active Directory, DNS, DHCP et VPN). Installation, configuration et maintenance des systèmes Windows et postes clients. Gestion des utilisateurs, groupes et droits d’accès via Active Directory. Diagnostic et résolution d’incidents réseau et participation à la sécurisation de l’infrastructure.",
+        "skillMaintenance": "Maintenance Systèmes",
+        "skillSecurity": "Sécurité Réseau"
+      },
+      "licence": {
+        "categoryLabel": "Formation (Licence)",
+        "period": "2024 — 2025",
+        "role": "Licence Sciences Mathématiques et Informatiques (SMI)",
+        "institution": "Faculté des Sciences (FSK), Université Ibn Tofaïl — Kénitra",
+        "description": "Formation universitaire approfondie : Algorithmique avancée & Optimisation, Recherche Opérationnelle, Programmation Système (Linux), Structures de données, C++, Java et Bases de données avancées.",
+        "skillAlgo": "Algorithmique Avancée",
+        "skillSys": "Programmation Système (Linux)",
+        "skillDb": "Bases de Données",
+        "skillRo": "Recherche Opérationnelle"
+      },
+      "onssa": {
+        "categoryLabel": "Stage Professionnel",
+        "period": "Juillet 2023 — Août 2023",
+        "role": "Stagiaire Informatique & Gestion des Données",
+        "institution": "Office National de Sécurité Sanitaire des Produits Alimentaires (ONSSA) — Béni Mellal",
+        "description": "Consolidation et traitement automatisé de données sanitaires régionales sous Excel, fiabilisant le suivi opérationnel. Maintenance informatique, assistance technique aux utilisateurs et administration courante des postes de travail.",
+        "skillData": "Gestion des Données",
+        "skillExcel": "Traitement Automatisé Excel",
+        "skillSupport": "Assistance Utilisateurs",
+        "skillMaint": "Maintenance Informatique"
+      },
+      "bts": {
+        "categoryLabel": "Formation (BTS)",
+        "period": "2022 — 2024",
+        "role": "Diplôme de Brevet de Technicien Supérieur (BTS) en Systèmes et Réseaux Informatiques",
+        "institution": "Lycée Technique Mohammed V — Béni Mellal",
+        "description": "Formation technique en administration des systèmes informatiques (Windows / Linux), architectures réseaux, protocoles de communication, sécurité et télécommunications.",
+        "skillSysNet": "Systèmes & Réseaux",
+        "skillProtocols": "Protocoles Réseaux",
+        "skillTelecom": "Télécommunications",
+        "skillSec": "Sécurité Informatique"
+      }
+    }
+  },
+  "projects": {
+    "eyebrow": "02 / Projets",
+    "title": "Projets Sélectionnés",
+    "description": "Cliquez sur un projet pour explorer son architecture de production complète, son pipeline de données et sa conception système.",
+    "view_architecture": "Voir l'Architecture Système",
+    "close_architecture": "Fermer l'Architecture",
+    "architecture_title": "Architecture Système & Conception Technique",
+    "pipeline_heading": "Pipeline de Bout en Bout & Flux de Données",
+    "pillars_heading": "Points Clés d'Ingénierie & Métriques",
+    "items": {
+      "bma": {
+        "title": "BMA — Compagnon IA Multilingue pour la Santé Mentale",
+        "badge": "NLP & IA Générative • Edge + Cloud",
+        "description": "Système conversationnel hybride associant un classifieur DistilBERT fine-tuné (intentions & émotions) et un modèle génératif Google Gemini avec basculement automatique multi-modèles (haute disponibilité).",
+        "multilingualTag": "Multilingue (Arabe, FR, EN)",
+        "highlights": "Module prioritaire de détection des signaux de détresse avec redirection d'urgence (lignes 15/3114) • Support multilingue (Arabe, Français, Anglais)",
+        "archOverview": "Architecture IA hybride et résiliente combinant classification NLP locale à très faible latence pour la détection précoce des crises, et mécanisme cloud de secours multi-modèles pour garantir une écoute bienveillante ininterrompue.",
+        "steps": [
+          { "title": "Normalisation Trilingue des Requêtes", "desc": "Prétraitement et nettoyage des requêtes en arabe (suppression des diacritiques), français et anglais avec limitation dynamique de tokens." },
+          { "title": "Classifieur d'Intentions & Détresse DistilBERT", "desc": "Modèle DistilBERT PyTorch fine-tuné avec inférence ultra-rapide (<45ms) pour détecter l'état émotionnel, l'intensité et les signaux d'alerte." },
+          { "title": "Intercepteur de Sécurité & Routage d'Urgence", "desc": "Garde-fou déterministe qui court-circuite le modèle génératif en cas de crise aiguë pour afficher directement les numéros d'urgence (3114 / SOS)." },
+          { "title": "Moteur Génératif avec Cascade Multi-Modèles", "desc": "Appel à l'API Google Gemini avec repli automatique (Gemini 2.5 Flash -> Gemini 1.5 Flash -> Réponse empathique locale) assurant 99,9% de disponibilité." },
+          { "title": "Mémoire Tampon & Stockage Zéro-PII", "desc": "Historique de session SQLite avec fenêtre glissante de contexte et politique stricte d'anonymisation des données personnelles." }
+        ],
+        "pillars": [
+          { "label": "Latence", "val": "< 45ms", "desc": "Inférence locale PyTorch DistilBERT" },
+          { "label": "Disponibilité", "val": "99,9%", "desc": "Failover automatique multi-modèles" },
+          { "label": "Langues", "val": "3", "desc": "Arabe, Français et Anglais natifs" },
+          { "label": "Sécurité", "val": "Instantané", "desc": "Routage prioritaire vers lignes d'urgence" }
+        ]
+      },
+      "fraudguard": {
+        "title": "FraudGuard — Système de Détection de Fraude Bancaire",
+        "badge": "Imbalanced ML & Explicabilité • Production",
+        "description": "Pipeline de Machine Learning pour transactions hautement déséquilibrées (0,17% de fraudes) avec optimisation rigoureuse des courbes PR-AUC et ROC-AUC.",
+        "highlights": "Explicabilité complète par valeurs SHAP et application web Flask pour le scoring et l'analyse de risque des transactions en temps réel",
+        "archOverview": "Pipeline de Machine Learning de production spécialement conçu pour le déséquilibre de classe sévère (0,17% de fraudes), intégrant rééchantillonnage hybride, matrice de coût asymétrique et explicabilité réglementaire intégrale via SHAP.",
+        "steps": [
+          { "title": "Flux de Données Haute Cadence", "desc": "Ingestion continue des transactions bancaires (variables PCA V1 à V28, montants et intervalles temporels)." },
+          { "title": "Prétraitement & RobustScaler", "desc": "Mise à l'échelle robuste des montants asymétriques et filtrage statistique des anomalies financières." },
+          { "title": "Rééchantillonnage Hybride (SMOTE-ENN)", "desc": "Combinaison de sur-échantillonnage synthétique (SMOTE) et nettoyage des voisins bruités (ENN) pour traiter le ratio 0,17% sans surapprentissage." },
+          { "title": "Ensemble d'Arbres Sensible aux Coûts", "desc": "Classifieurs XGBoost et LightGBM calibrés avec une matrice de pénalité pénalisant 50 fois plus les faux négatifs (fraudes manquées) que les faux positifs." },
+          { "title": "Explicabilité SHAP & API REST Flask", "desc": "Calcul en temps réel des valeurs SHAP (<25ms) exposant les facteurs déterminants de chaque transaction pour les auditeurs et analystes bancaires." }
+        ],
+        "pillars": [
+          { "label": "PR-AUC", "val": "0,88+", "desc": "Optimisé sur 0,17% d'événements rares" },
+          { "label": "Temps de Scoring", "val": "< 25ms", "desc": "Scoring en temps réel par API Flask" },
+          { "label": "Auditabilité", "val": "100%", "desc": "Explicabilité totale via valeurs SHAP" },
+          { "label": "Matrice de Coût", "val": "50:1", "desc": "Priorité absolue aux fraudes évitées" }
+        ]
+      },
+      "intelej": {
+        "title": "IntelEJ Medical Center — Plateforme de Santé & Assistant IA",
+        "badge": "Full-Stack Healthcare IA • Entreprise",
+        "description": "Plateforme médicale full-stack dotée de tableaux de bord avec contrôle d'accès (portails Médecin et Patient) et prise de rendez-vous en ligne.",
+        "highlights": "Intégration de l'assistant médical intelligent Al-Rāzī pour le pré-diagnostic et le triage des requêtes en arabe, français et anglais",
+        "archOverview": "Plateforme clinique full-stack moderne conçue avec React 18, Supabase et la sécurité Postgres Row Level Security (RLS), articulée autour de l'assistant Al-Rāzī pour automatiser le triage médical et la prise de rendez-vous.",
+        "steps": [
+          { "title": "Portails Dédiés par Rôles (React 18)", "desc": "Interfaces distinctes pour Patients (symptômes, rendez-vous, historique) et Médecins (file clinique, calendrier, fiches de triage)." },
+          { "title": "Moteur de Triage Trilingue Al-Rāzī", "desc": "Assistant clinique interactif en arabe, français et anglais analysant la gravité des symptômes et recommandant la spécialité adaptée." },
+          { "title": "Authentification JWT & Postgres RLS", "desc": "Ségrégation stricte des données de santé conforme HIPAA/RGPD : chaque patient n'accède qu'à son dossier, chaque médecin à sa patientèle." },
+          { "title": "Synchronisation Temps Réel WebSocket", "desc": "Canaux temps réel Supabase alertant instantanément les praticiens des nouvelles consultations et modifications de planning." },
+          { "title": "Rapports Pré-Cliniques Structurés", "desc": "Schémas relationnels Postgres archivant les pré-diagnostics pour réduire jusqu'à 60% le temps de saisie administrative des médecins." }
+        ],
+        "pillars": [
+          { "label": "Sécurité", "val": "Postgres RLS", "desc": "Isolation absolue des dossiers médicaux" },
+          { "label": "IA de Triage", "val": "Al-Rāzī", "desc": "Orientation médicale trilingue" },
+          { "label": "Synchro Réseau", "val": "< 100ms", "desc": "Notifications temps réel WebSockets" },
+          { "label": "Gain Médical", "val": "60%", "desc": "Temps d'accueil clinique économisé" }
+        ]
+      }
+    }
+  },
+  "skills": {
+    "eyebrow": "03 / Compétences",
+    "title": "Compétences Techniques & Langues",
+    "description": "Ensemble des technologies, frameworks et méthodologies maîtrisés selon mon parcours académique et mes réalisations.",
+    "groups": {
+      "prog": "Langages de Programmation",
+      "ai": "Intelligence Artificielle & Data Science",
+      "ai_expert": "Systèmes Experts",
+      "ai_shap": "Explicabilité (SHAP)",
+      "ai_imbalanced": "Classification déséquilibrée",
+      "bigdata": "Big Data & Calcul Parallèle",
+      "bigdata_dist": "Gestion distribuée des données",
+      "bigdata_parallel": "Calcul parallèle (Hadoop, Spark)",
+      "bigdata_storage": "Technologies de stockage Big Data",
+      "bigdata_algo": "Algorithmique avancée & Optimisation",
+      "bigdata_ro": "Recherche Opérationnelle",
+      "se": "Génie Logiciel & Développement Web",
+      "se_sys": "Programmation Système (Linux)",
+      "db": "Bases de Données",
+      "db_adv": "Bases de données avancées",
+      "tools": "Outils & Méthodologie",
+      "tools_problem": "Résolution de problèmes",
+      "tools_team": "Travail d’équipe",
+      "tools_rigor": "Rigueur scientifique",
+      "languages": "Langues",
+      "lang_ar": "Arabe (Langue maternelle)",
+      "lang_fr": "Français (Courant — Niveau B2 TCF)",
+      "lang_en": "Anglais (Opérationnel / Technique)"
+    }
+  },
+  "faq": {
+    "eyebrow": "04 / Clarté",
+    "title": "Questions Fréquentes",
+    "description": "Réponses clés sur mon profil, mon parcours académique et ma disponibilité pour le PFE.",
+    "items": {
+      "q1": {
+        "question": "Quel est votre profil et votre domaine d’expertise principal ?",
+        "answer": "Étudiant en dernière année de Master (M2) Big Data, Intelligence Artificielle et Applications Avancées à l’Université Ibn Tofaïl (Kénitra). Je suis spécialisé dans la conception de modèles de Machine Learning, NLP (Transformers), architectures de données distribuées (Hadoop, Spark) et explicabilité des modèles (SHAP)."
+      },
+      "q2": {
+        "question": "Êtes-vous disponible pour un Stage de Fin d’Études (PFE) ?",
+        "answer": "Oui, absolument ! Je recherche activement un Stage de Fin d’Études (PFE) à partir de début février 2027 en tant qu’ingénieur IA / Data Scientist / Machine Learning Engineer ou Big Data Engineer."
+      },
+      "q3": {
+        "question": "Quelles sont les technologies que vous maîtrisez le plus ?",
+        "answer": "Côté IA & Données : Python, PyTorch, Scikit-Learn, Transformers, SHAP, Hadoop, Spark, SQL, PostgreSQL. Côté logiciel & backend : Flask, FastAPI, React 18, TypeScript, Tailwind CSS, Supabase, C++, Java et environnements Linux."
+      },
+      "q4": {
+        "question": "Quels projets majeurs illustrent vos compétences ?",
+        "answer": "1) BMA : Compagnon IA pour la santé mentale avec DistilBERT et Google Gemini. 2) FraudGuard : Détection de fraude bancaire sur transactions déséquilibrées (0,17% de fraudes) avec SHAP et Flask. 3) IntelEJ Medical Center : Plateforme clinique avec l'assistant intelligent trilingue Al-Rāzī."
+      },
+      "q5": {
+        "question": "Comment peut-on vous contacter pour une opportunité ou un entretien ?",
+        "answer": "Vous pouvez me contacter directement par email à azilmohamed051@gmail.com, par téléphone au +212 689 448 142, ou via LinkedIn (in/mohamed-azil)."
+      }
+    }
+  },
+  "contact": {
+    "eyebrow": "05 / Contact",
+    "title": "Me Contacter",
+    "description": "Vous avez une opportunité de stage PFE (Début Février 2027), un projet en IA ou souhaitez collaborer ? Échangeons dès maintenant.",
+    "availability": "Disponibilité Immédiate",
+    "statusTitle": "Recherche de Stage PFE (Début Février 2027)",
+    "statusDesc": "Disponible pour un Stage de Fin d’Études (PFE) ou opportunités en tant qu’Ingénieur IA, Machine Learning Engineer ou Big Data Engineer.",
+    "emailLabel": "Email Personnel",
+    "copyEmail": "Copier l'email dans le presse-papiers",
+    "copied": "Copié !",
+    "phoneLabel": "Téléphone / WhatsApp",
+    "nameLabel": "Votre Nom",
+    "namePlaceholder": "Jane Doe",
+    "emailFieldLabel": "Adresse Email",
+    "emailPlaceholder": "vous@exemple.com",
+    "subjectLabel": "Sujet",
+    "subjectPlaceholder": "Opportunité de stage / Projet IA",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Bonjour Mohamed, échangeons à propos de...",
+    "sendBtn": "Envoyer le Message",
+    "sentSuccess": "Message Reçu !"
+  },
+  "footer": {
+    "copy": "Master 2 Big Data & Intelligence Artificielle • © {{year}} Tous droits réservés.",
+    "backToTop": "Retour en haut ↑"
+  },
+  "chatbot": {
+    "welcomeBackRunner": "Bienvenue de retour ! 🏃‍♂️",
+    "welcomeBackReader": "Bienvenue de retour ! 📖",
+    "welcomeBack": "Bienvenue de retour !",
+    "initialGreeting": "Bonjour ! Je suis l'assistant IA de Mohamed. Posez-moi vos questions sur ses compétences, son parcours ou ses projets.",
+    "placeholder": "Posez une question sur les projets, le PFE..."
+  }
+}

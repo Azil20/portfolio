@@ -1,0 +1,242 @@
+{
+  "nav": {
+    "experiences": "Journey",
+    "projects": "Projects",
+    "skills": "Skills",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "lang_toggle": "FR",
+    "lang_tooltip": "Passer en Français"
+  },
+  "hero": {
+    "status": "Seeking PFE Internship (Feb 2027) • Master 2 Big Data & AI",
+    "description": "Final year Master's student (M2) in Big Data, Artificial Intelligence, and Advanced Applications at Ibn Tofail University (FSK Kenitra). Specializing in designing Machine Learning models, NLP, and distributed data architectures.",
+    "explore": "Explore Projects",
+    "contact": "Contact Me"
+  },
+  "journey": {
+    "eyebrow": "01 / Journey",
+    "title": "Education & Experience",
+    "description": "Academic rigor in Master 2 Big Data & AI at Ibn Tofail University (FSK) paired with solid hands-on experience in systems administration, networking, and software engineering.",
+    "filters": {
+      "all": "Full Journey",
+      "education": "Education",
+      "internship": "Experience & Internships"
+    },
+    "items": {
+      "m2": {
+        "categoryLabel": "Education (M2)",
+        "period": "2024 — Present",
+        "role": "Master in Big Data, Artificial Intelligence and Advanced Applications (M2)",
+        "institution": "Faculty of Sciences (FSK), Ibn Tofail University — Kenitra",
+        "description": "Advanced design of Machine Learning, Deep Learning, NLP (Transformers) and distributed data architectures. Distributed computing with Hadoop and Spark, developing production-grade AI pipelines with PyTorch and Scikit-Learn.",
+        "pfeSkill": "Seeking PFE 2027"
+      },
+      "abhoer": {
+        "categoryLabel": "Professional Internship",
+        "period": "May 2024 — June 2024",
+        "role": "IT Systems & Networks Engineering Intern",
+        "institution": "Oum Er-Rbia Hydraulic Basin Agency (ABHOER) — Beni Mellal",
+        "description": "Administration and configuration of Windows Server 2012 environment (Active Directory, DNS, DHCP, and VPN). Installation, configuration, and maintenance of client machines. User, group, and permissions management via Active Directory. Diagnostic and resolution of network incidents and infrastructure security.",
+        "skillMaintenance": "Systems Maintenance",
+        "skillSecurity": "Network Security"
+      },
+      "licence": {
+        "categoryLabel": "Education (Bachelor)",
+        "period": "2024 — 2025",
+        "role": "Bachelor's Degree in Mathematical & Computer Sciences (SMI)",
+        "institution": "Faculty of Sciences (FSK), Ibn Tofail University — Kenitra",
+        "description": "Rigorous academic curriculum: Advanced Algorithmics & Optimization, Operations Research, System Programming (Linux), Data Structures, C++, Java, and Advanced Database Systems.",
+        "skillAlgo": "Advanced Algorithms",
+        "skillSys": "System Programming (Linux)",
+        "skillDb": "Databases",
+        "skillRo": "Operations Research"
+      },
+      "onssa": {
+        "categoryLabel": "Professional Internship",
+        "period": "July 2023 — August 2023",
+        "role": "IT & Data Management Intern",
+        "institution": "National Office for Food Safety (ONSSA) — Beni Mellal",
+        "description": "Consolidation and automated processing of regional health datasets in Excel, streamlining operational tracking. Technical IT assistance, user support, and computer workstation administration.",
+        "skillData": "Data Management",
+        "skillExcel": "Automated Excel Processing",
+        "skillSupport": "User Support",
+        "skillMaint": "IT Maintenance"
+      },
+      "bts": {
+        "categoryLabel": "Education (BTS)",
+        "period": "2022 — 2024",
+        "role": "Higher Technical Certificate (BTS) in IT Systems & Networks",
+        "institution": "Mohammed V Technical High School — Beni Mellal",
+        "description": "Technical education in operating systems administration (Windows / Linux), network topologies, communication protocols, network security, and telecommunications.",
+        "skillSysNet": "Systems & Networks",
+        "skillProtocols": "Network Protocols",
+        "skillTelecom": "Telecommunications",
+        "skillSec": "Cybersecurity"
+      }
+    }
+  },
+  "projects": {
+    "eyebrow": "02 / Works",
+    "title": "Selected Projects",
+    "description": "Click any project card to inspect its full production architecture, data pipeline, and system design.",
+    "view_architecture": "View System Architecture",
+    "close_architecture": "Close Architecture",
+    "architecture_title": "System Architecture & Engineering Design",
+    "pipeline_heading": "End-to-End Pipeline & Data Flow",
+    "pillars_heading": "Engineering Highlights & Benchmarks",
+    "items": {
+      "bma": {
+        "title": "BMA — Multilingual AI Mental Health Companion",
+        "badge": "NLP & Generative AI • Edge + Cloud",
+        "description": "Hybrid conversational system combining a fine-tuned DistilBERT classifier (intents & emotions) with a generative Google Gemini model featuring automated multi-model fallback for high availability.",
+        "multilingualTag": "Multilingual (Arabic, FR, EN)",
+        "highlights": "Priority distress signal detection with emergency routing (lines 15/3114) • Full trilingual support (Arabic, French, English)",
+        "archOverview": "A resilient hybrid AI architecture integrating local edge NLP classification for rapid distress screening with an intelligent multi-model cloud fallback mechanism to guarantee continuous, empathetic conversation support.",
+        "steps": [
+          { "title": "Trilingual Input & Script Normalization", "desc": "Preprocesses user queries in Arabic (with diacritic handling), French, and English with token length gating." },
+          { "title": "DistilBERT Intent & Distress Classifier", "desc": "Fine-tuned PyTorch DistilBERT model running on low-latency inference (<45ms) to detect emotional state, severity level, and crisis indicators." },
+          { "title": "Safety Interceptor & Emergency Routing", "desc": "Immediate rule-based interceptor that bypasses generative models to dispatch helpline resources (e.g. 3114 / SOS) if acute distress is detected." },
+          { "title": "Multi-Model Fallback Generative Engine", "desc": "Calls Google Gemini API with automated multi-model cascade (Gemini 2.5 Flash -> Gemini 1.5 Flash -> Local empathetic fallback) for 99.9% resilience." },
+          { "title": "Context Buffer & Zero-PII Session Storage", "desc": "SQLite conversational history with sliding token window and privacy-compliant ephemeral memory." }
+        ],
+        "pillars": [
+          { "label": "Latency", "val": "< 45ms", "desc": "Local PyTorch DistilBERT inference" },
+          { "label": "Availability", "val": "99.9%", "desc": "Automated multi-model API failover" },
+          { "label": "Languages", "val": "3", "desc": "Arabic, French, and English" },
+          { "label": "Safety", "val": "Zero-Lag", "desc": "Instant crisis line interceptor" }
+        ]
+      },
+      "fraudguard": {
+        "title": "FraudGuard — Banking Fraud Detection System",
+        "badge": "Imbalanced ML & Explainability • Production",
+        "description": "Machine Learning pipeline tailored for highly imbalanced transactions (0.17% fraud rate) with rigorous optimization of PR-AUC and ROC-AUC curves.",
+        "highlights": "Full explainability using SHAP values and a Flask web application for real-time transaction scoring and risk analysis",
+        "archOverview": "An end-to-end Machine Learning pipeline specifically engineered for extreme class imbalance (0.17% fraud rate), featuring cost-sensitive ensemble modeling, PR-AUC optimization, and full regulatory explainability using SHAP values.",
+        "steps": [
+          { "title": "High-Throughput Ingestion Stream", "desc": "Ingests incoming credit card transactions (PCA features V1-V28, normalized amounts, time deltas)." },
+          { "title": "Preprocessing & Robust Scaling", "desc": "RobustScaler transforms heavily skewed transaction amounts while filtering financial outliers." },
+          { "title": "Class Imbalance Resampling (SMOTE-ENN)", "desc": "Combines Synthetic Minority Oversampling (SMOTE) with Edited Nearest Neighbors (ENN) to resolve the severe 0.17% imbalance without overfitting." },
+          { "title": "Cost-Sensitive Ensemble Classifier", "desc": "XGBoost & LightGBM ensemble tuned with custom asymmetric penalty matrix to penalize false negatives (missed frauds) 50x heavier than false positives." },
+          { "title": "SHAP Explainability & REST API Scoring", "desc": "Real-time TreeExplainer computes Shapley feature contributions in <25ms, returning fraud risk scores and top risk factors to banking auditors." }
+        ],
+        "pillars": [
+          { "label": "PR-AUC", "val": "0.88+", "desc": "Optimized on 0.17% rare fraud events" },
+          { "label": "Scoring Speed", "val": "< 25ms", "desc": "Flask REST API real-time scoring" },
+          { "label": "Auditability", "val": "100%", "desc": "Full explainability via SHAP values" },
+          { "label": "Cost Matrix", "val": "50:1", "desc": "Heavy penalty on false negatives" }
+        ]
+      },
+      "intelej": {
+        "title": "IntelEJ Medical Center — Healthcare Platform & AI Assistant",
+        "badge": "Full-Stack Healthcare AI • Enterprise",
+        "description": "Full-stack medical platform with role-based access control dashboards (Doctor and Patient portals) and automated online appointment management.",
+        "highlights": "Integration of Al-Rāzī intelligent assistant for pre-diagnosis and request triage in Arabic, French, and English",
+        "archOverview": "A full-stack clinical platform powered by React 18, Supabase, and Postgres Row Level Security, integrated with the Al-Rāzī intelligent medical triage assistant for symptom intake and appointment automation.",
+        "steps": [
+          { "title": "Role-Based Client Portals (React 18)", "desc": "Dedicated interfaces for Patients (symptoms intake, appointments, history) and Doctors (clinical queue, calendar, triage summary)." },
+          { "title": "Al-Rāzī Trilingual Triage Engine", "desc": "Interactive clinical dialogue system in Arabic, French, and English assessing symptom severity and recommending relevant medical specialties." },
+          { "title": "JWT Auth & Postgres Row-Level Security (RLS)", "desc": "Enforces strict HIPAA/GDPR-compliant data segregation so patients only access their own records and doctors only access assigned patient charts." },
+          { "title": "Real-Time WebSocket Sync Engine", "desc": "Supabase real-time channels instantly notifying doctors of incoming consultations and patient slot bookings." },
+          { "title": "Auditing & Structured Intake Storage", "desc": "Relational Postgres schemas storing structured pre-consultation reports to reduce physician intake time by up to 60%." }
+        ],
+        "pillars": [
+          { "label": "Security", "val": "Postgres RLS", "desc": "Strict patient-doctor chart segregation" },
+          { "label": "Triage AI", "val": "Al-Rāzī", "desc": "Trilingual pre-diagnosis guidance" },
+          { "label": "Sync Latency", "val": "< 100ms", "desc": "Real-time WebSocket notifications" },
+          { "label": "Intake Gain", "val": "60%", "desc": "Saved on medical intake paperwork" }
+        ]
+      }
+    }
+  },
+  "skills": {
+    "eyebrow": "03 / Skills",
+    "title": "Technical Skills & Languages",
+    "description": "Comprehensive suite of technologies, frameworks, and methodologies acquired through academic training and practical engineering.",
+    "groups": {
+      "prog": "Programming Languages",
+      "ai": "Artificial Intelligence & Data Science",
+      "ai_expert": "Expert Systems",
+      "ai_shap": "Explainability (SHAP)",
+      "ai_imbalanced": "Imbalanced Classification",
+      "bigdata": "Big Data & Parallel Computing",
+      "bigdata_dist": "Distributed Data Management",
+      "bigdata_parallel": "Parallel Computing (Hadoop, Spark)",
+      "bigdata_storage": "Big Data Storage Technologies",
+      "bigdata_algo": "Advanced Algorithms & Optimization",
+      "bigdata_ro": "Operations Research",
+      "se": "Software Engineering & Web Development",
+      "se_sys": "System Programming (Linux)",
+      "db": "Databases",
+      "db_adv": "Advanced Databases",
+      "tools": "Tools & Methodology",
+      "tools_problem": "Problem Solving",
+      "tools_team": "Teamwork",
+      "tools_rigor": "Scientific Rigor",
+      "languages": "Languages",
+      "lang_ar": "Arabic (Native Language)",
+      "lang_fr": "French (Fluent — B2 TCF Level)",
+      "lang_en": "English (Professional / Technical)"
+    }
+  },
+  "faq": {
+    "eyebrow": "04 / Clarity",
+    "title": "Frequently Asked Questions",
+    "description": "Key answers regarding my profile, academic trajectory, and availability for the 2027 PFE internship.",
+    "items": {
+      "q1": {
+        "question": "What is your primary profile and area of expertise?",
+        "answer": "Final year Master's student (M2) in Big Data, Artificial Intelligence, and Advanced Applications at Ibn Tofail University (Kenitra). I specialize in Machine Learning models, NLP (Transformers), distributed data architectures (Hadoop, Spark), and model explainability (SHAP)."
+      },
+      "q2": {
+        "question": "Are you available for an End-of-Studies (PFE) Internship?",
+        "answer": "Yes, absolutely! I am actively seeking an End-of-Studies Internship (PFE) starting early February 2027 as an AI Engineer, Data Scientist, Machine Learning Engineer, or Big Data Engineer."
+      },
+      "q3": {
+        "question": "Which technologies are you most proficient in?",
+        "answer": "AI & Data: Python, PyTorch, Scikit-Learn, Transformers, SHAP, Hadoop, Spark, SQL, PostgreSQL. Software & Backend: Flask, FastAPI, React 18, TypeScript, Tailwind CSS, Supabase, C++, Java, and Linux environments."
+      },
+      "q4": {
+        "question": "What major projects highlight your skills?",
+        "answer": "1) BMA: Mental health AI companion with DistilBERT and Google Gemini. 2) FraudGuard: Banking fraud detection on imbalanced transactions (0.17% frauds) with SHAP and Flask. 3) IntelEJ Medical Center: Clinical platform with trilingual intelligent assistant Al-Rāzī."
+      },
+      "q5": {
+        "question": "How can I contact you for an interview or opportunity?",
+        "answer": "You can reach me directly via email at azilmohamed051@gmail.com, by phone at +212 689 448 142, or through LinkedIn (in/mohamed-azil)."
+      }
+    }
+  },
+  "contact": {
+    "eyebrow": "05 / Contact",
+    "title": "Get in Touch",
+    "description": "Have an End-of-Studies PFE Internship opportunity (Starting Feb 2027), an AI project, or want to collaborate? Let's connect.",
+    "availability": "Immediate Availability",
+    "statusTitle": "Seeking PFE Internship (Starting Feb 2027)",
+    "statusDesc": "Available for an End-of-Studies (PFE) Internship or opportunities as an AI Engineer, Machine Learning Engineer, or Big Data Engineer.",
+    "emailLabel": "Personal Email",
+    "copyEmail": "Copy email to clipboard",
+    "copied": "Copied!",
+    "phoneLabel": "Phone / WhatsApp",
+    "nameLabel": "Your Name",
+    "namePlaceholder": "Jane Doe",
+    "emailFieldLabel": "Email Address",
+    "emailPlaceholder": "jane@example.com",
+    "subjectLabel": "Subject",
+    "subjectPlaceholder": "Internship / AI Project Inquiry",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Hi Mohamed, let's talk about...",
+    "sendBtn": "Send Message",
+    "sentSuccess": "Message Received!"
+  },
+  "footer": {
+    "copy": "Master 2 Big Data & Artificial Intelligence • © {{year}} All rights reserved.",
+    "backToTop": "Back to Top ↑"
+  },
+  "chatbot": {
+    "welcomeBackRunner": "Welcome back! 🏃‍♂️",
+    "welcomeBackReader": "Welcome back! 📖",
+    "welcomeBack": "Welcome back!",
+    "initialGreeting": "Hello! I'm Mohamed's AI assistant. Ask me anything about his skills, experience, or projects.",
+    "placeholder": "Ask about projects, ML, PFE..."
+  }
+}
