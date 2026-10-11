@@ -653,7 +653,7 @@ export default function Home() {
                   </a>
 
                   <a 
-                    href="https://linkedin.com/in/mohamed-azil" 
+                    href="https://www.linkedin.com/in/mohamed-azil-3b303b365/" 
                     target="_blank" 
                     rel="noreferrer" 
                     className="contact-card clickable"
@@ -663,7 +663,7 @@ export default function Home() {
                     </div>
                     <div className="contact-card-content">
                       <span className="contact-card-label">LinkedIn</span>
-                      <span className="contact-card-val">linkedin.com/in/mohamed-azil</span>
+                      <span className="contact-card-val">mohamed-azil-3b303b365</span>
                     </div>
                     <ArrowUpRight size={18} className="text-muted" />
                   </a>

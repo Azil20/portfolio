@@ -21,7 +21,7 @@ Key Information about Mohamed Azil:
 - Contact:
   - Email: azilmohamed051@gmail.com
   - Téléphone: +212 689 448 142
-  - LinkedIn: https://linkedin.com/in/mohamed-azil
+  - LinkedIn: https://www.linkedin.com/in/mohamed-azil-3b303b365/
   - GitHub: https://github.com/Azil20
   - Localisation: Maroc (Kénitra / Béni Mellal)
 - Formations (Education):
@@ -135,7 +135,7 @@ function generateKnowledgeFallback(userQuery: string): string {
   }
 
   if (query.includes('pfe') || query.includes('recrut') || query.includes('disponib') || query.includes('hire') || query.includes('contact') || query.includes('email') || query.includes('phone') || query.includes('tel')) {
-    return "Mohamed Azil recherche activement un **Stage de Fin d'Études (PFE)** débutant en **février 2027** en tant qu'ingénieur IA, Machine Learning Engineer ou Big Data Engineer.\n\nVous pouvez le contacter directement :\n• Email : azilmohamed051@gmail.com\n• Téléphone / WhatsApp : +212 689 448 142\n• LinkedIn : https://linkedin.com/in/mohamed-azil\n• GitHub : https://github.com/Azil20";
+    return "Mohamed Azil recherche activement un **Stage de Fin d'Études (PFE)** débutant en **février 2027** en tant qu'ingénieur IA, Machine Learning Engineer ou Big Data Engineer.\n\nVous pouvez le contacter directement :\n• Email : azilmohamed051@gmail.com\n• Téléphone / WhatsApp : +212 689 448 142\n• LinkedIn : https://www.linkedin.com/in/mohamed-azil-3b303b365/\n• GitHub : https://github.com/Azil20";
   }
 
   if (query.includes('skill') || query.includes('stack') || query.includes('tech') || query.includes('competence') || query.includes('python')) {
