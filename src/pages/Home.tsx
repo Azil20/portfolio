@@ -61,6 +61,15 @@ interface ProjectItem {
 export default function Home() {
   const { t } = useTranslation();
   const { scrollYProgress } = useScroll();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
 
   // Active Project Architecture Modal
@@ -323,7 +332,7 @@ export default function Home() {
         {/* Hero Section */}
         <section className="section h-screen flex-center" style={{ overflow: 'hidden' }}>
           <motion.div 
-            style={{ y }}
+            style={{ y: isMobile ? 0 : y }}
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
@@ -339,7 +348,7 @@ export default function Home() {
               <span className="chrome-text">Azil</span>
             </h1>
 
-            <p className="text-muted" style={{ fontSize: '1.25rem', maxWidth: '660px', marginTop: '1.5rem', lineHeight: '1.7' }}>
+            <p className="text-muted hero-desc">
               {t('hero.description')}
             </p>
 
@@ -350,7 +359,7 @@ export default function Home() {
               <a href="#reach-out" className="btn btn-outline">
                 {t('hero.contact')} <ArrowUpRight size={18} style={{ marginLeft: '6px' }} />
               </a>
-              <a href="mailto:azilmohamed051@gmail.com" className="btn btn-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              <a href="mailto:azilmohamed051@gmail.com" className="btn btn-outline hero-email-btn">
                 <Mail size={16} /> azilmohamed051@gmail.com
               </a>
             </div>
