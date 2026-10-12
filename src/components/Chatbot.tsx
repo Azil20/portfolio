@@ -2,7 +2,8 @@ import React, { useRef, useState, useEffect, useMemo, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Environment, Sphere, Box, Torus, Cylinder } from '@react-three/drei';
 import * as THREE from 'three';
-import { X, Send } from 'lucide-react';
+import { X } from 'lucide-react';
+import PaperPlaneIcon from './PaperPlaneIcon';
 import { useTranslation } from 'react-i18next';
 import {
   streamAIChat,
@@ -116,7 +117,10 @@ function Face({
   fireflyProgressRef,
   fireflyTrackingRef,
   wakeStartTimeRef,
+  planeFlightRef,
   isChatOpen,
+  isThinking = false,
+  isSpeaking = false,
   chromeMaterial,
   isMobile
 }: {
@@ -125,7 +129,10 @@ function Face({
   fireflyProgressRef: React.MutableRefObject<number>;
   fireflyTrackingRef: React.MutableRefObject<{ x: number, y: number }>;
   wakeStartTimeRef: React.MutableRefObject<number>;
+  planeFlightRef?: React.MutableRefObject<{ active: boolean; startTime: number; duration: number }>;
   isChatOpen: boolean;
+  isThinking?: boolean;
+  isSpeaking?: boolean;
   chromeMaterial: THREE.Material;
   isMobile: boolean;
 }) {
@@ -149,16 +156,23 @@ function Face({
     }
   }, [sleepStage]);
 
-  // Normal blinking when awake
+  // Lively blinking when awake
   useEffect(() => {
     const blinkInterval = setInterval(() => {
       if (sleepStage === 'awake') {
         setBlink(true);
-        setTimeout(() => setBlink(false), 150);
+        setTimeout(() => setBlink(false), 140);
+        // On mobile, occasionally trigger an energetic double-blink for extra lifelike personality!
+        if (isMobile && Math.random() > 0.45) {
+          setTimeout(() => {
+            setBlink(true);
+            setTimeout(() => setBlink(false), 120);
+          }, 220);
+        }
       }
-    }, Math.random() * 3000 + 2000);
+    }, isMobile ? Math.random() * 2200 + 1400 : Math.random() * 3000 + 2000);
     return () => clearInterval(blinkInterval);
-  }, [sleepStage]);
+  }, [sleepStage, isMobile]);
 
   useFrame((state) => {
     const isSleeping = sleepStage === 'sleeping';
@@ -176,7 +190,16 @@ function Face({
       let floatSpeed = 1.5;
       let floatAmp = 0.12;
 
-      if (isSleeping) {
+      if (isThinking) {
+        floatSpeed = 2.0; // focused, thoughtful float
+        floatAmp = 0.06;
+      } else if (isSpeaking) {
+        floatSpeed = 2.2; // animated conversational float
+        floatAmp = 0.05;
+      } else if (isChatOpen) {
+        floatSpeed = 1.3;
+        floatAmp = 0.05; // calm and steady while user reads/chats
+      } else if (isSleeping) {
         floatSpeed = 0.8;
         floatAmp = 0.05; // deep rhythmic breathing
       } else if (isReading) {
@@ -191,9 +214,32 @@ function Face({
       } else if (isWaking) {
         floatSpeed = 3.0;
         floatAmp = 0.03;
+      } else if (isMobile) {
+        // MOBILE ONLY: Lively, upbeat springy floating rhythm full of energy!
+        floatSpeed = 2.3;
+        floatAmp = 0.055;
       }
 
-      groupRef.current.position.y = -0.08 + Math.sin(t * floatSpeed) * floatAmp;
+      // Base Y position & headroom:
+      // On mobile: baseline is lowered to -0.18 (-0.14 when chat open) so the top hair tufts (reaching +1.67)
+      // have generous headroom and are NEVER clipped or hidden by the top edge of the canvas!
+      // On PC: maintains original (isChatOpen ? -0.04 : -0.08) position completely untouched.
+      const baseY = isMobile
+        ? (isChatOpen ? -0.14 : -0.18)
+        : (isChatOpen ? -0.04 : -0.08);
+
+      const bobY = (isMobile && !isSleeping && !isReading)
+        ? Math.sin(t * floatSpeed) * floatAmp + Math.sin(t * (floatSpeed * 2)) * 0.014
+        : Math.sin(t * floatSpeed) * floatAmp;
+
+      groupRef.current.position.y = baseY + bobY;
+      groupRef.current.position.z = 0;
+
+      // 3D Model Scale:
+      // On mobile only: exactly +3% bigger (1.03) as requested!
+      // On PC: strictly 1.0 (unchanged)
+      const modelScale = isMobile ? 1.03 : 1.0;
+      groupRef.current.scale.set(modelScale, modelScale, modelScale);
 
       // Position X movement for fetching the book out of screen!
       let targetX = 0;
@@ -215,20 +261,66 @@ function Face({
       groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, targetX, xLerpSpeed);
 
       // Head orientation angles:
-      // On mobile devices, don't follow the cursor (since there is no cursor on phones).
-      // Instead, display subtle lifelike glances so the model stays awake and alive!
-      let targetYaw = isMobile
-        ? (Math.sin(t * 0.6) * 0.14 + Math.sin(t * 1.3) * 0.05)
-        : mousePosRef.current.x;
-      let targetPitch = isMobile
-        ? (Math.sin(t * 0.45) * 0.08)
-        : mousePosRef.current.y;
-      let targetZ = Math.sin(t * 1) * 0.04;
+      // On PC: seamlessly follows user's mouse cursor.
+      // On mobile: displays lively, curious glances, cheerful tilts, and alert nods full of energy!
+      const mobileEnergyCycle = t * 1.1;
+      const energeticYaw = Math.sin(mobileEnergyCycle * 0.8) * 0.22 + Math.sin(mobileEnergyCycle * 2.2) * 0.07;
+      const energeticPitch = -0.07 + Math.cos(mobileEnergyCycle * 1.3) * 0.09 + Math.sin(mobileEnergyCycle * 2.5) * 0.03;
+      const energeticRoll = Math.sin(mobileEnergyCycle * 1.5) * 0.08 + Math.cos(mobileEnergyCycle * 0.7) * 0.04;
 
-      if (isChatOpen) {
-        targetYaw = -0.35;
-        targetPitch = 0.05;
-        targetZ = 0;
+      let targetYaw = isMobile ? energeticYaw : mousePosRef.current.x;
+      let targetPitch = isMobile ? energeticPitch : mousePosRef.current.y;
+      let targetZ = isMobile ? energeticRoll : Math.sin(t * 1) * 0.04;
+
+      if (planeFlightRef?.current?.active) {
+        const elapsed = (performance.now() - planeFlightRef.current.startTime) / 1000;
+        const totalDuration = planeFlightRef.current.duration / 1000;
+        const p = Math.min(1, Math.max(0, elapsed / totalDuration));
+
+        if (p < 1) {
+          // Med actively tracks the paper plane soaring across from the send button towards the right!
+          // Yaw sweeps smoothly from -0.48 (left at chat input) to +0.88 (far right into the distance)
+          targetYaw = THREE.MathUtils.lerp(-0.48, 0.88, Math.pow(p, 0.82));
+          // Pitch arcs high as the plane climbs into the digital sky
+          targetPitch = -0.16 - Math.sin(p * Math.PI) * 0.24;
+          // Roll tilts head slightly with focused curiosity
+          targetZ = Math.sin(p * Math.PI) * 0.12;
+        } else if (elapsed < totalDuration + 0.35) {
+          // Plane has just vanished off the right! Holds glance watching it disappear
+          targetYaw = 0.86;
+          targetPitch = -0.14;
+          targetZ = 0.04;
+        } else {
+          // Finished flight tracking sequence
+          planeFlightRef.current.active = false;
+        }
+      } else if (isThinking) {
+        // Pensive thinking pose: naturally tilted upwards, curious ponderous gaze into thought
+        targetYaw = -0.22 + Math.sin(t * 1.4) * 0.08;
+        targetPitch = -0.18 + Math.cos(t * 1.6) * 0.04; // natural thoughtful upward ponder
+        targetZ = -0.10 + Math.sin(t * 1.2) * 0.03;     // thoughtful side-tilt
+      } else if (isSpeaking) {
+        // Talking pose: looking warmly towards the chat window with gentle speaking nods
+        targetYaw = -0.30 + Math.sin(t * 3.5) * 0.04;
+        targetPitch = -0.18 + Math.cos(t * 4.0) * 0.03; // head nods slightly while speaking
+        targetZ = Math.sin(t * 2.0) * 0.03;
+      } else if (isChatOpen) {
+        // Attentive listening pose when on the chat:
+        // Turns towards the chat window and looks upwards into the conversation,
+        // while tracking user cursor with a smooth, natural blend!
+        const chatBaseYaw = -0.28;
+        const chatBasePitch = -0.20; // looking UP into the chat window above him
+        if (isMobile) {
+          // Attentive and enthusiastically listening on mobile
+          targetYaw = chatBaseYaw + Math.sin(t * 1.5) * 0.08;
+          targetPitch = chatBasePitch + Math.cos(t * 1.8) * 0.06;
+          targetZ = Math.sin(t * 1.2) * 0.04;
+        } else {
+          // Responsive tracking: glances towards cursor with upward bias toward chat
+          targetYaw = THREE.MathUtils.clamp(chatBaseYaw + mousePosRef.current.x * 0.35, -0.65, 0.1);
+          targetPitch = THREE.MathUtils.clamp(chatBasePitch + mousePosRef.current.y * 0.25, -0.45, 0.05);
+          targetZ = (mousePosRef.current.x * 0.05);
+        }
       } else if (isFetching) {
         const elapsed = (performance.now() - fetchStartTimeRef.current) / 1000;
         if (elapsed < 0.9) {
@@ -279,7 +371,8 @@ function Face({
         targetZ = 0;
       }
 
-      const lerpSpeed = isWaking ? 0.16 : (isReading ? 0.08 : (isFireflies ? 0.07 : 0.1));
+      const isFlightActive = Boolean(planeFlightRef?.current?.active);
+      const lerpSpeed = isFlightActive ? 0.16 : (isThinking ? 0.12 : (isWaking ? 0.16 : (isReading ? 0.08 : (isFireflies ? 0.07 : 0.1))));
       groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, targetYaw, lerpSpeed);
       groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, targetPitch, lerpSpeed);
       groupRef.current.rotation.z = THREE.MathUtils.lerp(groupRef.current.rotation.z, targetZ, 0.1);
@@ -336,7 +429,19 @@ function Face({
     // Eyes logic
     let targetEyeScale = 2.5;
 
-    if (isSleeping) {
+    if (planeFlightRef?.current?.active) {
+      // Alert, enthusiastic eyes tracking the flying message
+      targetEyeScale = 2.8;
+    } else if (isThinking) {
+      // Pensive calculating eyes with subtle thoughtful focus
+      targetEyeScale = 1.7;
+    } else if (isSpeaking) {
+      // Engaged, expressive speaking eyes
+      targetEyeScale = 2.5;
+    } else if (isChatOpen) {
+      // Attentive listening eyes
+      targetEyeScale = 2.4;
+    } else if (isSleeping) {
       targetEyeScale = 0.08;
     } else if (isReading) {
       targetEyeScale = 1.6; // focused reading eyes behind glasses
@@ -371,11 +476,19 @@ function Face({
       }
     } else if (blink) {
       targetEyeScale = 0.1;
+    } else if (isMobile) {
+      // Alert, enthusiastic, alive eyes on mobile!
+      targetEyeScale = 2.65 + Math.sin(t * 2.2) * 0.14;
     }
 
     if (leftEyeRef.current && rightEyeRef.current) {
       leftEyeRef.current.scale.y = THREE.MathUtils.lerp(leftEyeRef.current.scale.y, targetEyeScale, 0.22);
       rightEyeRef.current.scale.y = THREE.MathUtils.lerp(rightEyeRef.current.scale.y, targetEyeScale, 0.22);
+
+      // When thinking or on chat, eyes gaze attentively towards conversation
+      const targetEyePosY = isThinking ? 0.14 : (isChatOpen ? 0.12 : 0.1);
+      leftEyeRef.current.position.y = THREE.MathUtils.lerp(leftEyeRef.current.position.y, targetEyePosY, 0.15);
+      rightEyeRef.current.position.y = THREE.MathUtils.lerp(rightEyeRef.current.position.y, targetEyePosY, 0.15);
     }
 
     // Mouth logic: yawning when sleepiness overtakes him / waking stretch
@@ -384,7 +497,22 @@ function Face({
       let targetMouthX = 0.6;
       let targetMouthZ = 0.2;
 
-      if (isWaking) {
+      if (isThinking) {
+        // Pursed, subtle thinking mouth
+        targetMouthY = 0.09;
+        targetMouthX = 0.42;
+        targetMouthZ = 0.16;
+      } else if (isSpeaking) {
+        // Naturally animated speech mouth (syllables articulation)
+        targetMouthY = 0.14 + Math.abs(Math.sin(t * 11)) * 0.28;
+        targetMouthX = 0.58 + Math.sin(t * 8) * 0.08;
+        targetMouthZ = 0.22;
+      } else if (isChatOpen) {
+        // Subtle friendly resting smile while listening
+        targetMouthY = 0.13;
+        targetMouthX = 0.65;
+        targetMouthZ = 0.2;
+      } else if (isWaking) {
         const wakeElapsed = Math.min(1, (performance.now() - wakeStartTimeRef.current) / 1150);
         const stretch = Math.sin(wakeElapsed * Math.PI) * 0.45;
         targetMouthY = 0.12 + stretch;
@@ -398,6 +526,11 @@ function Face({
         targetMouthY = 0.06;
         targetMouthX = 0.45;
         targetMouthZ = 0.15;
+      } else if (isMobile) {
+        // Cheerful, energetic pleasant smile on mobile
+        targetMouthY = 0.14 + Math.abs(Math.sin(t * 2.8)) * 0.02;
+        targetMouthX = 0.68 + Math.sin(t * 1.8) * 0.05;
+        targetMouthZ = 0.22;
       }
 
       mouthRef.current.scale.y = THREE.MathUtils.lerp(mouthRef.current.scale.y, targetMouthY, 0.18);
@@ -603,6 +736,95 @@ function CanvasFireflyReflection({ active, progress }: { active: boolean; progre
   return <pointLight ref={lightRef} color="#a3e635" intensity={0} distance={4} />;
 }
 
+// 3D Point Light casting a dynamic pulsing cyan glow on the chrome head when thinking
+function ThinkingLightEffect({ active }: { active: boolean }) {
+  const lightRef = useRef<THREE.PointLight>(null);
+
+  useFrame((state, delta) => {
+    if (!lightRef.current) return;
+    const t = state.clock.getElapsedTime();
+    let targetIntensity = 0;
+    if (active) {
+      const pulse = Math.sin(t * 3.5) * 0.5 + 0.5;
+      targetIntensity = 0.75 + pulse * 0.45;
+      lightRef.current.position.set(0.3, 0.9, 0.9);
+    }
+    // Smoothly lerp intensity in and out so there's no harsh blinking or popping
+    lightRef.current.intensity = THREE.MathUtils.lerp(
+      lightRef.current.intensity,
+      targetIntensity,
+      Math.min(delta * 6, 1)
+    );
+  });
+
+  return <pointLight ref={lightRef} color="#38bdf8" intensity={0} distance={3.5} />;
+}
+
+// Real-time 3D Royal-Blue Point Light that follows the cursor across Med's chrome head
+function CursorModelLight({ active }: { active: boolean }) {
+  const lightRef = useRef<THREE.PointLight>(null);
+  const softRef = useRef<THREE.PointLight>(null);
+  const targetIntensity = active ? 11.5 : 0;
+  const targetSoftIntensity = active ? 4.5 : 0;
+
+  useFrame((state, delta) => {
+    if (!lightRef.current) return;
+
+    // Smoothly transition light intensities
+    lightRef.current.intensity = THREE.MathUtils.lerp(
+      lightRef.current.intensity,
+      targetIntensity,
+      Math.min(delta * 14, 1)
+    );
+
+    if (softRef.current) {
+      softRef.current.intensity = THREE.MathUtils.lerp(
+        softRef.current.intensity,
+        targetSoftIntensity,
+        Math.min(delta * 14, 1)
+      );
+    }
+
+    if (lightRef.current.intensity > 0.05) {
+      // Camera fov 45 at distance 3.68 gives exact ray projection scale of 1.52
+      const targetX = state.pointer.x * 1.52;
+      const targetY = state.pointer.y * 1.52;
+      const targetZ = 1.32; // Directly in front of the metallic face surface
+
+      lightRef.current.position.x = THREE.MathUtils.lerp(lightRef.current.position.x, targetX, Math.min(delta * 22, 1));
+      lightRef.current.position.y = THREE.MathUtils.lerp(lightRef.current.position.y, targetY, Math.min(delta * 22, 1));
+      lightRef.current.position.z = targetZ;
+
+      if (softRef.current) {
+        softRef.current.position.x = lightRef.current.position.x;
+        softRef.current.position.y = lightRef.current.position.y;
+        softRef.current.position.z = 1.58;
+      }
+    }
+  });
+
+  return (
+    <group>
+      {/* Intense primary specular blue point light */}
+      <pointLight
+        ref={lightRef}
+        color="#0038ff"
+        intensity={0}
+        distance={4.6}
+        decay={1.65}
+      />
+      {/* Soft radiant ambient blue glow that washes over the cheek and chin contours */}
+      <pointLight
+        ref={softRef}
+        color="#0048ff"
+        intensity={0}
+        distance={6.5}
+        decay={1.35}
+      />
+    </group>
+  );
+}
+
 // 5 Fireflies flying from all over the left (Upper Left, Mid Left, Lower Left) across the screen
 function ScreenFireflies({
   active,
@@ -722,6 +944,94 @@ function ScreenFireflies({
   );
 }
 
+interface FlyingPaperPlaneProps {
+  startX: number;
+  startY: number;
+  onComplete: () => void;
+}
+
+function FlyingPaperPlane({ startX, startY, onComplete }: FlyingPaperPlaneProps) {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    let animId: number;
+    const startTime = performance.now();
+    const duration = 1400; // 1.4s flight time
+
+    const step = (now: number) => {
+      const elapsed = now - startTime;
+      const p = Math.min(1, elapsed / duration);
+      setProgress(p);
+
+      if (p < 1) {
+        animId = requestAnimationFrame(step);
+      } else {
+        onComplete();
+      }
+    };
+
+    animId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(animId);
+  }, [onComplete]);
+
+  // Flight path calculations:
+  // Starts at send button (startX, startY)
+  // Accelerates across screen to the right until it completely vanishes beyond right viewport edge
+  const targetX = window.innerWidth + 130;
+  const liftHeight = Math.max(160, Math.min(260, window.innerHeight * 0.35));
+
+  // Horizontal nonlinear acceleration curve
+  const easedX = Math.pow(progress, 1.25);
+  const currentX = THREE.MathUtils.lerp(startX, targetX, easedX);
+
+  // Parabolic aerodynamic flight arc (climbs high, then swoops gracefully forward)
+  const arcY = -Math.sin(Math.pow(progress, 0.78) * Math.PI * 0.95) * liftHeight;
+  const currentY = startY + arcY - (progress * 50);
+
+  // Dynamic aerodynamic banking: starts pointing up-right, levels slightly, accelerates right
+  const rotation = THREE.MathUtils.lerp(-45, 18, Math.pow(progress, 0.85));
+
+  // Scale: liftoff swelling, then shrinks gracefully as it vanishes into distance
+  const scale = progress < 0.22
+    ? THREE.MathUtils.lerp(0.85, 1.3, progress / 0.22)
+    : THREE.MathUtils.lerp(1.3, 0.75, (progress - 0.22) / 0.78);
+
+  // Fading out as it rockets past the right screen boundary
+  const opacity = progress > 0.86 ? THREE.MathUtils.lerp(1, 0, (progress - 0.86) / 0.14) : 1;
+
+  return (
+    <div className="flying-paper-plane-container">
+      <div
+        className="flying-paper-plane-wrapper"
+        style={{
+          transform: `translate3d(${currentX}px, ${currentY}px, 0) rotate(${rotation}deg) scale(${scale})`,
+          opacity,
+          transformOrigin: 'center center'
+        }}
+      >
+        {/* Aerodynamic glowing light-blue vapor trail */}
+        <div
+          className="flying-plane-trail"
+          style={{
+            transform: `rotate(180deg) scaleY(${1 + Math.sin(progress * Math.PI) * 0.8})`,
+            opacity: Math.sin(progress * Math.PI) * 0.9
+          }}
+        />
+        {/* Trailing energy sparks */}
+        <div
+          className="flying-plane-spark"
+          style={{
+            top: '40%',
+            left: '-16px',
+            opacity: Math.sin(progress * Math.PI)
+          }}
+        />
+        <PaperPlaneIcon size={26} filled={true} style={{ color: '#38bdf8' }} />
+      </div>
+    </div>
+  );
+}
+
 export default function Chatbot() {
   const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
@@ -731,6 +1041,7 @@ export default function Chatbot() {
   const [aiConfig] = useState<AIConfig>(getStoredAIConfig);
   const [isMobile, setIsMobile] = useState(false);
   const isMobileRef = useRef(false);
+  const [isHoveringCanvas, setIsHoveringCanvas] = useState(false);
 
   // Detect mobile / touch devices
   useEffect(() => {
@@ -765,6 +1076,14 @@ export default function Chatbot() {
   const sleepStageRef = useRef<SleepStage>('awake');
   const [fireflyProgress, setFireflyProgress] = useState(0);
 
+  // Paper plane flight tracking ref and state
+  const planeFlightRef = useRef<{ active: boolean; startTime: number; duration: number }>({
+    active: false,
+    startTime: 0,
+    duration: 1400
+  });
+  const [flyingPlane, setFlyingPlane] = useState<{ x: number; y: number; key: number } | null>(null);
+
   const [messages, setMessages] = useState<Message[]>([
     { text: t('chatbot.initialGreeting'), isBot: true }
   ]);
@@ -795,12 +1114,12 @@ export default function Chatbot() {
 
   // Shared 3D Physical Matte Silver Material ("silver mat")
   const chromeMaterial = useMemo(() => new THREE.MeshPhysicalMaterial({
-    color: "#ffffff",
-    metalness: 0.98,
-    roughness: 0.20,
+    color: "#0a0808ff",
+    metalness: 0.989,
+    roughness: 0.09,
     envMapIntensity: 2.25,
     clearcoat: 1,
-    clearcoatRoughness: 0.6
+    clearcoatRoughness: 0.5
   }), []);
 
   // Auto-scroll messages as tokens stream in
@@ -868,6 +1187,17 @@ export default function Chatbot() {
     } else {
       resetTimeout();
     }
+  }, [isOpen]);
+
+  // Close chat on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen]);
 
   // Listen for dark/light mode toggle
@@ -1033,8 +1363,27 @@ export default function Chatbot() {
     e.preventDefault();
     if (!input.trim() || isStreaming) return;
 
+    // Trigger paper plane flight animation & 3D model tracking
+    const sendBtn = document.querySelector('.chat-send');
+    const rect = sendBtn?.getBoundingClientRect();
+    const startX = rect ? rect.left + rect.width / 2 - 14 : window.innerWidth - 65;
+    const startY = rect ? rect.top + rect.height / 2 - 14 : window.innerHeight - 200;
+
+    planeFlightRef.current = {
+      active: true,
+      startTime: performance.now(),
+      duration: 1400
+    };
+    setFlyingPlane({ x: startX, y: startY, key: Date.now() });
+
     const userText = input.trim();
     setInput('');
+
+    // On mobile, blur active input to gracefully dismiss on-screen keyboard and prevent stuck zoom
+    if (isMobile) {
+      (document.activeElement as HTMLElement)?.blur();
+      window.scrollTo({ top: window.scrollY, behavior: 'instant' });
+    }
 
     const updatedMsgs: Message[] = [
       ...messages,
@@ -1078,9 +1427,19 @@ export default function Chatbot() {
   };
 
   const isSleeping = sleepStage === 'sleeping';
+  const lastBotMsg = messages[messages.length - 1];
+  const isBotThinking = isStreaming && (!lastBotMsg || !lastBotMsg.text);
+  const isBotSpeaking = isStreaming && Boolean(lastBotMsg && lastBotMsg.text);
 
   return (
     <>
+      {/* Immersive background blur overlay across main window when AI chat is open */}
+      <div
+        className={`chat-backdrop-blur ${isOpen ? 'active' : ''}`}
+        onClick={() => setIsOpen(false)}
+        aria-label="Close Chat"
+      />
+
       {/* 5 Fireflies flying from all over the left (upper to lower left) across the screen */}
       <ScreenFireflies
         active={sleepStage === 'fireflies'}
@@ -1088,36 +1447,24 @@ export default function Chatbot() {
         onComplete={handleFireflyComplete}
       />
 
+      {/* Flying Paper Plane Animation */}
+      {flyingPlane && (
+        <FlyingPaperPlane
+          key={flyingPlane.key}
+          startX={flyingPlane.x}
+          startY={flyingPlane.y}
+          onComplete={() => setFlyingPlane(null)}
+        />
+      )}
+
       <div className="chatbot-container">
-        {/* Floating Agent Speech Bubble when cursor is outside the 20cm circle */}
-        <div
-          className={`chatbot-agent-bubble ${showAgentBubble && !isOpen && sleepStage === 'awake' && !showWelcomeBubble ? 'visible' : ''}`}
-          onClick={() => setIsOpen(true)}
-          title="Click to chat with Mohamed's AI Assistant"
-        >
-          <span className="chatbot-bubble-sparkle">✦</span>
-          <span>I'm an AI Agent — click me to chat!</span>
-        </div>
-
-        {/* Welcome Back Bubble when returning from fetching book or reading */}
-        <div
-          className={`chatbot-agent-bubble ${showWelcomeBubble && !isOpen ? 'visible' : ''}`}
-          style={{
-            borderColor: 'var(--color-primary, #6366f1)',
-            boxShadow: '0 8px 24px rgba(99, 102, 241, 0.25)'
-          }}
-          onClick={() => setIsOpen(true)}
-        >
-          <span className="chatbot-bubble-sparkle">👋</span>
-          <span style={{ fontWeight: 600 }}>{welcomeBubbleText}</span>
-        </div>
-
         {/* Chat Window */}
         <div className={`chat-window ${isOpen ? 'open' : ''}`}>
           <div className="chat-header">
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e' }}></span>
-              <span>AI Assistant</span>
+              <span style={{ fontWeight: 600, letterSpacing: '0.02em' }}>Med</span>
+              <span style={{ fontSize: '0.78rem', opacity: 0.75 }}>· AI Assistant</span>
             </div>
             <button type="button" className="chat-close" onClick={() => setIsOpen(false)} title="Close Chat">
               <X size={18} />
@@ -1148,22 +1495,35 @@ export default function Chatbot() {
             <input
               type="text"
               className="chat-input"
-              placeholder={isStreaming ? (i18n.language?.startsWith('fr') ? "L'IA répond..." : "AI is replying...") : t('chatbot.placeholder')}
+              placeholder={isStreaming ? (i18n.language?.startsWith('fr') ? "Med réfléchit..." : "Med is thinking...") : t('chatbot.placeholder')}
               value={input}
               disabled={isStreaming}
               onChange={(e) => setInput(e.target.value)}
+              autoComplete="off"
+              autoCorrect="off"
+              enterKeyHint="send"
             />
-            <button type="submit" className="chat-send" disabled={isStreaming || !input.trim()}>
-              <Send size={18} />
+            <button type="submit" className="chat-send" disabled={isStreaming || !input.trim()} title="Send message">
+              <PaperPlaneIcon size={19} filled={true} />
             </button>
           </form>
         </div>
+
+        {/* Speech / Welcome back bubble */}
+        {!isOpen && (showWelcomeBubble || (isMobile && showAgentBubble)) && (
+          <div className="chatbot-welcome-bubble">
+            {welcomeBubbleText || t('chatbot.tapToChat', 'Chat with Med')}
+          </div>
+        )}
 
         {/* 3D Canvas wrapper */}
         <div
           className={`chatbot-canvas-wrapper ${isOpen ? 'active' : ''}`}
           onClick={() => setIsOpen(!isOpen)}
-          style={{ zIndex: 1001 }}
+          onPointerEnter={() => !isMobile && setIsHoveringCanvas(true)}
+          onPointerLeave={() => setIsHoveringCanvas(false)}
+          title={isOpen ? "Click to minimize chat" : "Click to chat with Med"}
+          style={{ zIndex: 1000 }}
         >
           <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
             <ambientLight intensity={1} />
@@ -1177,15 +1537,22 @@ export default function Chatbot() {
               fireflyProgressRef={fireflyProgressRef}
               fireflyTrackingRef={fireflyTrackingRef}
               wakeStartTimeRef={wakeStartTimeRef}
+              planeFlightRef={planeFlightRef}
               isChatOpen={isOpen}
+              isThinking={isBotThinking}
+              isSpeaking={isBotSpeaking}
               chromeMaterial={chromeMaterial}
               isMobile={isMobile}
             />
+            {/* Real-time 3D Royal-Blue Point Light reflecting across chrome head when cursor hovers */}
+            <CursorModelLight active={isHoveringCanvas} />
             {/* Real-time green-gold firefly reflection light on chrome head */}
             <CanvasFireflyReflection
               active={sleepStage === 'fireflies'}
               progress={fireflyProgress}
             />
+            {/* Cybernetic neural thinking light effect while AI is processing response */}
+            <ThinkingLightEffect active={isBotThinking} />
             {/* 3D Chrome Extruded Zzz meshes using the exact 3D model chromeMaterial */}
             <SleepingZzz3D
               active={isSleeping && !isOpen}

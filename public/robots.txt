@@ -1,0 +1,6 @@
+# robots.txt for Mohamed Azil Portfolio
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://azil20.github.io/portfolio/sitemap.xml

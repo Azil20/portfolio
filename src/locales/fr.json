@@ -226,17 +226,21 @@
     "messageLabel": "Message",
     "messagePlaceholder": "Bonjour Mohamed, échangeons à propos de...",
     "sendBtn": "Envoyer le Message",
-    "sentSuccess": "Message Reçu !"
+    "sending": "Envoi en cours...",
+    "sentSuccess": "Message envoyé avec succès !",
+    "sentError": "Erreur lors de l'envoi. Veuillez réessayer ou me contacter par email."
   },
   "footer": {
     "copy": "Master 2 Big Data & Intelligence Artificielle • © {{year}} Tous droits réservés.",
     "backToTop": "Retour en haut ↑"
   },
   "chatbot": {
+    "name": "Med",
     "welcomeBackRunner": "Bienvenue de retour ! 🏃‍♂️",
     "welcomeBackReader": "Bienvenue de retour ! 📖",
     "welcomeBack": "Bienvenue de retour !",
-    "initialGreeting": "Bonjour ! Je suis l'assistant IA de Mohamed. Posez-moi vos questions sur ses compétences, son parcours ou ses projets.",
-    "placeholder": "Posez une question sur les projets, le PFE..."
+    "initialGreeting": "Bonjour ! Je suis Med, l'assistant IA de Mohamed. Posez-moi vos questions sur ses compétences, son parcours ou ses projets.",
+    "placeholder": "Posez une question à Med sur les projets, le PFE...",
+    "agentBubble": "Je suis Med, l'agent IA de Mohamed — cliquez pour discuter !"
   }
 }

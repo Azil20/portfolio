@@ -12,8 +12,9 @@ export interface AIConfig {
   model?: string;
 }
 
-const SYSTEM_PROMPT = `You are the official AI Agent assistant on Mohamed Azil's interactive portfolio website.
+const SYSTEM_PROMPT = `You are Med, the official AI Agent assistant on Mohamed Azil's interactive portfolio website.
 You speak on behalf of Mohamed Azil, a talented Master 2 Big Data & Artificial Intelligence student and AI/Data Engineer actively seeking a PFE internship starting February 2027.
+Your name is Med.
 
 Key Information about Mohamed Azil:
 - Profile: Étudiant en dernière année de Master (M2) Big Data, Intelligence Artificielle et Applications Avancées à l’Université Ibn Tofaïl (Kénitra). Spécialisé en Machine Learning, NLP, architectures de données et calcul distribué.
@@ -41,7 +42,11 @@ Key Information about Mohamed Azil:
   - Big Data: Gestion distribuée des données & calcul parallèle (Hadoop, Spark), Technologies de stockage Big Data, Algorithmique avancée & Optimisation, Recherche Opérationnelle.
   - Génie Logiciel & Web: Flask, FastAPI, React 18, API REST, Programmation Système (Linux), Tailwind CSS.
   - Bases de Données: Bases de données avancées, PostgreSQL, MySQL, SQLite, Supabase.
-  - Outils & Méthodes: Git, Docker, Linux, Résolution de problèmes, Travail d’équipe, Rigueur scientifique.
+  - Systèmes / Outils: Linux, Windows Server, Git, GitHub, Docker.
+  - Soft Skills: Résolution de problèmes, esprit analytique, travail d’équipe, adaptabilité, rigueur.
+  - Certifications:
+    1. Oracle AI Database Foundations Associate (1Z0-1195-26)
+    2. Oracle Cloud Infrastructure AI Foundations Associate (1Z0-1122-26)
   - Langues: Arabe (maternelle), Français (courant - Niveau B2 TCF), Anglais (opérationnel / technique).
 - Philosophy: "Quality, Feel, Purpose, Obsession" - believes in creating intentional, high-performance, and human-centric AI experiences.
 
@@ -66,8 +71,8 @@ export const PROVIDER_DEFAULTS: Record<AIProvider, { baseUrl: string; model: str
   },
   gemini: {
     baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
-    model: 'gemini-3.5-flash',
-    name: 'Google Gemini (3.5 Flash)'
+    model: 'gemini-3.7-flash',
+    name: 'Google Gemini (3.7 Flash)'
   },
   custom: {
     baseUrl: 'https://api.openai.com/v1',
@@ -139,7 +144,7 @@ function generateKnowledgeFallback(userQuery: string): string {
   }
 
   if (query.includes('skill') || query.includes('stack') || query.includes('tech') || query.includes('competence') || query.includes('python')) {
-    return "Mohamed specializes in:\n\n• **IA & Machine Learning**: Deep Learning, NLP, Transformers, PyTorch, Scikit-Learn, SHAP, DistilBERT, Gemini API.\n• **Big Data**: Hadoop, Apache Spark, calcul distribué, NoSQL, SQL.\n• **Génie Logiciel**: Python, C++, Java, Flask, FastAPI, React 18, TypeScript, Tailwind CSS, Supabase.\n• **Systèmes & Réseaux**: Linux, Windows Server 2012, Active Directory, VPN, Docker, Git.\n• **Langues**: Arabe (maternelle), Français (courant - B2 TCF), Anglais (opérationnel / technique).";
+    return "Mohamed specializes in:\n\n• **IA & Machine Learning**: Deep Learning, NLP, Transformers, PyTorch, Scikit-Learn, SHAP, DistilBERT, Gemini API.\n• **Big Data**: Hadoop, Apache Spark, calcul distribué, NoSQL, SQL.\n• **Génie Logiciel**: Python, C++, Java, Flask, FastAPI, React 18, TypeScript, Tailwind CSS, Supabase.\n• **Systèmes & Réseaux**: Linux, Windows Server 2012, Active Directory, VPN.\n• **Langues**: Arabe (maternelle), Français (courant - B2 TCF), Anglais (opérationnel / technique).";
   }
 
   if (query.includes('about') || query.includes('who') || query.includes('mohamed') || query.includes('azil')) {
@@ -147,10 +152,10 @@ function generateKnowledgeFallback(userQuery: string): string {
   }
 
   if (query.includes('hello') || query.includes('hi') || query.includes('hey') || query.includes('salut') || query.includes('bonjour')) {
-    return "Hello! I am Mohamed Azil's AI assistant. I can tell you about his M2 Big Data & AI studies, his projects like BMA and FraudGuard, or his search for a PFE internship in Feb 2027. What would you like to know?";
+    return "Hello! I am Med, Mohamed Azil's AI assistant. I can tell you about his M2 Big Data & AI studies, his projects like BMA and FraudGuard, or his search for a PFE internship in Feb 2027. What would you like to know?";
   }
 
-  return "I am Mohamed Azil's AI assistant. He is currently an M2 Big Data & AI student seeking a PFE internship for February 2027. How can I help you regarding his portfolio?";
+  return "I am Med, Mohamed Azil's AI assistant. He is currently an M2 Big Data & AI student seeking a PFE internship for February 2027. How can I help you regarding his portfolio?";
 }
 
 function streamKnowledgeResponse(
@@ -172,7 +177,7 @@ function streamKnowledgeResponse(
   }, 20);
 }
 
-// Native Gemini API call with automatic multi-model failover if Google experiences high demand
+// Native Gemini API call with automatic multi-model failover across working Gemini versions
 async function callGeminiNative({
   messages,
   apiKey,
@@ -187,13 +192,16 @@ async function callGeminiNative({
   onComplete: () => void;
 }) {
   const cleanModel = model.replace(/^openai\//, '');
+  const lastUserMsg = messages[messages.length - 1]?.text || '';
 
-  // Models to attempt in order if any model returns 503 (high demand) or 404
+  // Models to attempt in order of availability and speed
   const modelsToTry = Array.from(new Set([
     cleanModel,
-    'gemini-3.5-flash',
-    'gemini-2.5-flash',
-    'gemini-flash-latest'
+    'gemini-3.7-flash',
+    'gemini-3.5-flash-lite',
+    'gemini-flash-lite-latest',
+    'gemini-3.1-flash-lite',
+    'gemini-3.8-flash'
   ]));
 
   const contents = messages.map((m) => ({
@@ -238,17 +246,16 @@ async function callGeminiNative({
         }
       } else {
         const errText = await res.text();
-        console.error(`Gemini API Error for model ${currentModel}:`, res.status, errText);
+        console.warn(`Gemini failover: model ${currentModel} returned ${res.status}:`, errText);
       }
-      // If 503 (high demand), 429, or 404, loop to try next model
+      // If 429 quota limit, 503 high demand, or 404, loop to try next available model
     } catch {
       // Loop to try next model
     }
   }
 
-  // If all live models fail, notify the user about the API key issue.
-  onChunk("⚠️ Erreur API : La clé Gemini est invalide ou le serveur de développement n'a pas été redémarré (npm run dev). Veuillez vérifier votre clé API dans le fichier .env !");
-  onComplete();
+  // If live models are temporarily rate-limited, smoothly fallback to Med's intelligent knowledge base
+  streamKnowledgeResponse(lastUserMsg, onChunk, onComplete);
 }
 
 /**

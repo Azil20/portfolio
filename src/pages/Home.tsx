@@ -7,7 +7,6 @@ import {
   Briefcase, 
   Sparkles, 
   Mail, 
-  Send, 
   Check, 
   Copy, 
   ChevronDown, 
@@ -17,8 +16,13 @@ import {
   Phone,
   X,
   Cpu,
-  Layers
+  Layers,
+  Loader2,
+  AlertCircle,
+  Download
 } from 'lucide-react';
+import Footer from '../components/Footer';
+import PaperPlaneIcon from '../components/PaperPlaneIcon';
 
 const GithubIcon = ({ size = 20 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -59,7 +63,9 @@ interface ProjectItem {
 }
 
 export default function Home() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isFrench = i18n.language?.startsWith('fr');
+  const [cvDropdownOpen, setCvDropdownOpen] = useState(false);
   const { scrollYProgress } = useScroll();
   const [isMobile, setIsMobile] = useState(false);
 
@@ -90,7 +96,8 @@ export default function Home() {
   // Contact Form State
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [formState, setFormState] = useState({ name: '', email: '', subject: '', message: '' });
-  const [formSent, setFormSent] = useState(false);
+  const [formStatus, setFormStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [formErrorMsg, setFormErrorMsg] = useState('');
 
   const handleCopyEmail = () => {
     navigator.clipboard.writeText('azilmohamed051@gmail.com');
@@ -98,38 +105,53 @@ export default function Home() {
     setTimeout(() => setCopiedEmail(false), 2500);
   };
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formState.name || !formState.email || !formState.message) return;
-    setFormSent(true);
-    setTimeout(() => {
-      setFormSent(false);
-      setFormState({ name: '', email: '', subject: '', message: '' });
-    }, 4000);
+    if (!formState.name.trim() || !formState.email.trim() || !formState.message.trim()) return;
+
+    setFormStatus('sending');
+    setFormErrorMsg('');
+
+    try {
+      const accessKey = ((import.meta as any).env?.VITE_WEB3FORMS_ACCESS_KEY || '').trim();
+
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        },
+        body: JSON.stringify({
+          access_key: accessKey,
+          name: formState.name.trim(),
+          email: formState.email.trim(),
+          subject: formState.subject.trim() || `Nouveau message de ${formState.name} (Portfolio Mohamed Azil)`,
+          message: formState.message.trim(),
+          from_name: formState.name.trim(),
+          to_email: 'azilmohamed051@gmail.com',
+          botcheck: ''
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setFormStatus('success');
+        setFormState({ name: '', email: '', subject: '', message: '' });
+        setTimeout(() => setFormStatus('idle'), 6000);
+      } else {
+        setFormStatus('error');
+        setFormErrorMsg(data.message || t('contact.sentError'));
+        setTimeout(() => setFormStatus('idle'), 7000);
+      }
+    } catch {
+      setFormStatus('error');
+      setFormErrorMsg(t('contact.sentError'));
+      setTimeout(() => setFormStatus('idle'), 7000);
+    }
   };
 
-  // Custom cursor logic
-  useEffect(() => {
-    const cursorDot = document.querySelector('.cursor-dot') as HTMLElement;
-    const cursorOutline = document.querySelector('.cursor-outline') as HTMLElement;
 
-    const moveCursor = (e: MouseEvent) => {
-      if (!cursorDot || !cursorOutline) return;
-      const posX = e.clientX;
-      const posY = e.clientY;
-
-      cursorDot.style.left = `${posX}px`;
-      cursorDot.style.top = `${posY}px`;
-
-      cursorOutline.animate({
-        left: `${posX}px`,
-        top: `${posY}px`
-      }, { duration: 500, fill: "forwards" });
-    };
-
-    window.addEventListener('mousemove', moveCursor);
-    return () => window.removeEventListener('mousemove', moveCursor);
-  }, []);
 
   const [timelineFilter, setTimelineFilter] = useState<'all' | 'education' | 'internship'>('all');
 
@@ -292,7 +314,7 @@ export default function Home() {
     },
     {
       title: t('skills.groups.tools'),
-      skills: ['Git', 'Docker', 'Linux', t('skills.groups.tools_problem'), t('skills.groups.tools_team'), t('skills.groups.tools_rigor')]
+      skills: ['Linux', t('skills.groups.tools_problem'), t('skills.groups.tools_team'), t('skills.groups.tools_rigor')]
     },
     {
       title: t('skills.groups.languages'),
@@ -325,8 +347,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="cursor-dot"></div>
-      <div className="cursor-outline"></div>
+
 
       <main id="top">
         {/* Hero Section */}
@@ -359,6 +380,51 @@ export default function Home() {
               <a href="#reach-out" className="btn btn-outline">
                 {t('hero.contact')} <ArrowUpRight size={18} style={{ marginLeft: '6px' }} />
               </a>
+
+              {/* CV Download Dropdown */}
+              <div className="hero-cv-dropdown-wrapper">
+                <button 
+                  type="button" 
+                  className="btn btn-outline hero-cv-btn"
+                  onClick={() => setCvDropdownOpen(!cvDropdownOpen)}
+                  aria-expanded={cvDropdownOpen}
+                >
+                  <Download size={16} />
+                  <span>{isFrench ? "Télécharger CV" : "Download CV"}</span>
+                  <ChevronDown size={14} style={{ transform: cvDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }} />
+                </button>
+                {cvDropdownOpen && (
+                  <div className="hero-cv-dropdown-menu">
+                    <a 
+                      href="/CV_Mohamed_Azil_EN.pdf" 
+                      download="CV_Mohamed_AZIL_EN.pdf"
+                      className="hero-cv-dropdown-item"
+                      onClick={() => setCvDropdownOpen(false)}
+                    >
+                      <span className="cv-item-lang">EN</span>
+                      <div className="cv-item-text">
+                        <strong>English Resume</strong>
+                        <small>PDF (Big Data &amp; AI)</small>
+                      </div>
+                      <Download size={14} />
+                    </a>
+                    <a 
+                      href="/CV_Mohamed_Azil_FR.pdf" 
+                      download="CV_Mohamed_AZIL_FR.pdf"
+                      className="hero-cv-dropdown-item"
+                      onClick={() => setCvDropdownOpen(false)}
+                    >
+                      <span className="cv-item-lang">FR</span>
+                      <div className="cv-item-text">
+                        <strong>CV Français</strong>
+                        <small>PDF (Officiel M2)</small>
+                      </div>
+                      <Download size={14} />
+                    </a>
+                  </div>
+                )}
+              </div>
+
               <a href="mailto:azilmohamed051@gmail.com" className="btn btn-outline hero-email-btn">
                 <Mail size={16} /> azilmohamed051@gmail.com
               </a>
@@ -684,6 +750,36 @@ export default function Home() {
                     <ArrowUpRight size={18} className="text-muted" />
                   </a>
 
+                  {/* Curriculum Vitae Download Card */}
+                  <div className="contact-card">
+                    <div className="contact-card-icon">
+                      <Download size={22} />
+                    </div>
+                    <div className="contact-card-content" style={{ width: '100%' }}>
+                      <span className="contact-card-label">Curriculum Vitae</span>
+                      <div className="contact-cv-actions">
+                        <a 
+                          href="/CV_Mohamed_Azil_EN.pdf" 
+                          download="CV_Mohamed_AZIL_EN.pdf"
+                          className="contact-cv-badge-btn"
+                          title="Download English Resume (PDF)"
+                        >
+                          <Download size={13} />
+                          <span>English (PDF)</span>
+                        </a>
+                        <a 
+                          href="/CV_Mohamed_Azil_FR.pdf" 
+                          download="CV_Mohamed_AZIL_FR.pdf"
+                          className="contact-cv-badge-btn"
+                          title="Télécharger CV Français (PDF)"
+                        >
+                          <Download size={13} />
+                          <span>Français (PDF)</span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
               </div>
 
@@ -744,36 +840,37 @@ export default function Home() {
                   <button 
                     type="submit" 
                     className="btn form-submit-btn" 
-                    disabled={formSent}
+                    disabled={formStatus === 'sending' || formStatus === 'success'}
                   >
-                    {formSent ? (
+                    {formStatus === 'sending' ? (
                       <>
-                        <Check size={18} style={{ marginRight: '8px' }} /> {t('contact.sentSuccess')}
+                        <Loader2 size={18} className="animate-spin" style={{ marginRight: '8px' }} /> {t('contact.sending')}
+                      </>
+                    ) : formStatus === 'success' ? (
+                      <>
+                        <Check size={18} style={{ marginRight: '8px', color: '#22c55e' }} /> {t('contact.sentSuccess')}
                       </>
                     ) : (
                       <>
-                        <Send size={18} style={{ marginRight: '8px' }} /> {t('contact.sendBtn')}
+                        <PaperPlaneIcon size={18} filled={true} style={{ marginRight: '8px' }} /> {t('contact.sendBtn')}
                       </>
                     )}
                   </button>
+
+                  {formStatus === 'error' && (
+                    <div className="form-status-alert error" style={{ marginTop: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#ef4444', fontSize: '0.875rem' }}>
+                      <AlertCircle size={16} style={{ flexShrink: 0 }} />
+                      <span>{formErrorMsg || t('contact.sentError')}</span>
+                    </div>
+                  )}
                 </form>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className="footer">
-          <div className="container footer-content">
-            <span className="footer-logo">MOHAMED AZIL</span>
-            <p className="text-muted" style={{ fontSize: '0.85rem' }}>
-              {t('footer.copy', { year: new Date().getFullYear() })}
-            </p>
-            <a href="#top" className="footer-top-link">
-              {t('footer.backToTop')}
-            </a>
-          </div>
-        </footer>
+        {/* Engineering-Grade Footer matching image */}
+        <Footer />
       </main>
 
       {/* Interactive System Architecture Modal */}

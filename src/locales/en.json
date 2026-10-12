@@ -226,17 +226,21 @@
     "messageLabel": "Message",
     "messagePlaceholder": "Hi Mohamed, let's talk about...",
     "sendBtn": "Send Message",
-    "sentSuccess": "Message Received!"
+    "sending": "Sending message...",
+    "sentSuccess": "Message sent successfully!",
+    "sentError": "Failed to send message. Please try again or email directly."
   },
   "footer": {
     "copy": "Master 2 Big Data & Artificial Intelligence • © {{year}} All rights reserved.",
     "backToTop": "Back to Top ↑"
   },
   "chatbot": {
+    "name": "Med",
     "welcomeBackRunner": "Welcome back! 🏃‍♂️",
     "welcomeBackReader": "Welcome back! 📖",
     "welcomeBack": "Welcome back!",
-    "initialGreeting": "Hello! I'm Mohamed's AI assistant. Ask me anything about his skills, experience, or projects.",
-    "placeholder": "Ask about projects, ML, PFE..."
+    "initialGreeting": "Hello! I'm Med, Mohamed's AI assistant. Ask me anything about his skills, experience, or projects.",
+    "placeholder": "Ask Med about projects, ML, PFE...",
+    "agentBubble": "I'm Med, Mohamed's AI Assistant — click to chat!"
   }
 }
