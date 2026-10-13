@@ -19,10 +19,10 @@ import {
   Layers,
   Loader2,
   AlertCircle,
-  Download
+  Download,
+  Send
 } from 'lucide-react';
 import Footer from '../components/Footer';
-import PaperPlaneIcon from '../components/PaperPlaneIcon';
 
 const GithubIcon = ({ size = 20 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -60,6 +60,7 @@ interface ProjectItem {
   archOverview: string;
   steps: ArchitectureStep[];
   pillars: ArchitecturePillar[];
+  featured?: boolean;
 }
 
 export default function Home() {
@@ -90,8 +91,8 @@ export default function Home() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // FAQ Accordion State
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  // FAQ Accordion State (all closed by default for clean scan)
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   // Contact Form State
   const [copiedEmail, setCopiedEmail] = useState(false);
@@ -222,8 +223,9 @@ export default function Home() {
   const projects: ProjectItem[] = [
     {
       id: 'bma',
+      featured: true,
       title: t('projects.items.bma.title'),
-      badge: t('projects.items.bma.badge', 'NLP & Generative AI • Edge + Cloud'),
+      badge: t('projects.items.bma.badge', 'NLP & Generative AI'),
       subtitle: 'PyTorch, DistilBERT, Gemini API, Flask, SQLite',
       description: t('projects.items.bma.description'),
       tags: ['PyTorch', 'DistilBERT', 'Gemini API', 'Flask', 'SQLite', t('projects.items.bma.multilingualTag')],
@@ -246,7 +248,7 @@ export default function Home() {
     {
       id: 'fraudguard',
       title: t('projects.items.fraudguard.title'),
-      badge: t('projects.items.fraudguard.badge', 'Imbalanced ML & Explainability • Production'),
+      badge: t('projects.items.fraudguard.badge', 'Imbalanced ML • Production'),
       subtitle: 'Python, Scikit-Learn, SHAP, Imbalanced ML, Flask',
       description: t('projects.items.fraudguard.description'),
       tags: ['Python', 'Scikit-Learn', 'SHAP', 'Imbalanced ML', 'Flask', 'PR-AUC & ROC-AUC'],
@@ -269,7 +271,7 @@ export default function Home() {
     {
       id: 'intelej',
       title: t('projects.items.intelej.title'),
-      badge: t('projects.items.intelej.badge', 'Full-Stack Healthcare AI • Enterprise'),
+      badge: t('projects.items.intelej.badge', 'Healthcare AI • Enterprise'),
       subtitle: 'React 18, TypeScript, Tailwind CSS, Supabase',
       description: t('projects.items.intelej.description'),
       tags: ['React 18', 'TypeScript', 'Tailwind CSS', 'Supabase', 'Assistant Al-Rāzī', 'Triage Médical'],
@@ -298,27 +300,23 @@ export default function Home() {
     },
     {
       title: t('skills.groups.ai'),
-      skills: ['Deep Learning', 'Machine Learning', 'NLP', 'Transformers', t('skills.groups.ai_expert'), t('skills.groups.ai_shap'), t('skills.groups.ai_imbalanced'), 'PyTorch', 'Scikit-Learn']
+      skills: ['PyTorch', 'Scikit-Learn', 'Deep Learning', 'Transformers', 'NLP', t('skills.groups.ai_shap'), t('skills.groups.ai_imbalanced'), t('skills.groups.ai_expert')]
     },
     {
       title: t('skills.groups.bigdata'),
-      skills: [t('skills.groups.bigdata_dist'), t('skills.groups.bigdata_parallel'), t('skills.groups.bigdata_storage'), t('skills.groups.bigdata_algo'), t('skills.groups.bigdata_ro')]
+      skills: ['Hadoop & Spark', t('skills.groups.bigdata_dist'), t('skills.groups.bigdata_parallel'), t('skills.groups.bigdata_storage'), t('skills.groups.bigdata_algo'), t('skills.groups.bigdata_ro')]
     },
     {
       title: t('skills.groups.se'),
-      skills: ['Flask', 'FastAPI', 'React 18', 'REST APIs', t('skills.groups.se_sys'), 'Tailwind CSS']
+      skills: ['FastAPI', 'Flask', 'React 18', 'REST APIs', 'Supabase', 'Tailwind CSS', t('skills.groups.se_sys')]
     },
     {
       title: t('skills.groups.db'),
       skills: [t('skills.groups.db_adv'), 'PostgreSQL', 'MySQL', 'SQLite', 'Supabase']
     },
     {
-      title: t('skills.groups.tools'),
-      skills: ['Linux', t('skills.groups.tools_problem'), t('skills.groups.tools_team'), t('skills.groups.tools_rigor')]
-    },
-    {
-      title: t('skills.groups.languages'),
-      skills: [t('skills.groups.lang_ar'), t('skills.groups.lang_fr'), t('skills.groups.lang_en')]
+      title: t('skills.groups.tools_and_languages'),
+      skills: ['Linux', 'Git', 'Docker', t('skills.groups.tools_problem'), t('skills.groups.tools_team'), t('skills.groups.lang_ar'), t('skills.groups.lang_fr'), t('skills.groups.lang_en')]
     }
   ];
 
@@ -351,7 +349,7 @@ export default function Home() {
 
       <main id="top">
         {/* Hero Section */}
-        <section className="section h-screen flex-center" style={{ overflow: 'hidden' }}>
+        <section className="hero-section" id="hero">
           <motion.div 
             style={{ y: isMobile ? 0 : y }}
             initial={{ opacity: 0, y: 50 }}
@@ -431,10 +429,10 @@ export default function Home() {
             </div>
           </motion.div>
 
-          <div style={{ position: 'absolute', bottom: '40px', left: '50%', transform: 'translateX(-50%)' }}>
+          <div style={{ position: 'absolute', bottom: '22px', left: '50%', transform: 'translateX(-50%)' }}>
             <motion.a
               href="#experiences"
-              animate={{ y: [0, 10, 0] }}
+              animate={{ y: [0, 8, 0] }}
               transition={{ repeat: Infinity, duration: 2 }}
               aria-label="Scroll down to Journey"
             >
@@ -536,7 +534,7 @@ export default function Home() {
               {projects.map((proj, idx) => (
                 <div 
                   key={proj.id} 
-                  className="project-card"
+                  className={`project-card ${proj.featured ? 'featured' : ''}`}
                   onClick={() => setActiveArchProject(proj)}
                   role="button"
                   tabIndex={0}
@@ -549,7 +547,14 @@ export default function Home() {
                   title={t('projects.view_architecture')}
                 >
                   <div className="project-header">
-                    <span className="project-badge">{proj.badge}</span>
+                    <div className="project-badges-group">
+                      <span className="project-badge">{proj.badge}</span>
+                      {proj.featured && (
+                        <span className="project-flagship-badge">
+                          ⭐ {isFrench ? 'Projet Phare' : 'Flagship'}
+                        </span>
+                      )}
+                    </div>
                     <span className="project-index">0{idx + 1}</span>
                   </div>
 
@@ -609,7 +614,7 @@ export default function Home() {
         {/* 4. FAQ Section */}
         <section className="section" id="faq">
           <div className="container" style={{ maxWidth: '960px' }}>
-            <div className="section-header" style={{ textAlign: 'center', margin: '0 auto 4rem auto' }}>
+            <div className="section-header" style={{ textAlign: 'center', margin: '0 auto 2.25rem auto' }}>
               <span className="section-eyebrow">{t('faq.eyebrow')}</span>
               <h2 className="section-title">{t('faq.title')}</h2>
               <p className="text-muted section-desc" style={{ margin: '0 auto' }}>
@@ -624,9 +629,13 @@ export default function Home() {
                   <div 
                     key={idx} 
                     className={`faq-item ${isOpen ? 'active' : ''}`}
-                    onClick={() => setOpenFaq(isOpen ? null : idx)}
                   >
-                    <button className="faq-question-btn" aria-expanded={isOpen}>
+                    <button 
+                      type="button"
+                      className="faq-question-btn" 
+                      aria-expanded={isOpen}
+                      onClick={() => setOpenFaq(isOpen ? null : idx)}
+                    >
                       <span className="faq-question-text">{faq.question}</span>
                       <ChevronDown 
                         size={20} 
@@ -634,16 +643,30 @@ export default function Home() {
                       />
                     </button>
                     
-                    <AnimatePresence>
+                    <AnimatePresence initial={false}>
                       {isOpen && (
                         <motion.div
+                          key="faq-answer-content"
                           initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.3, ease: 'easeInOut' }}
+                          animate={{ 
+                            height: 'auto', 
+                            opacity: 1,
+                            transition: {
+                              height: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
+                              opacity: { duration: 0.25, ease: [0.16, 1, 0.3, 1] }
+                            }
+                          }}
+                          exit={{ 
+                            height: 0, 
+                            opacity: 0,
+                            transition: {
+                              height: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
+                              opacity: { duration: 0.22, ease: [0.16, 1, 0.3, 1] }
+                            }
+                          }}
                           className="faq-answer-wrap"
                         >
-                          <p className="faq-answer text-muted">
+                          <p className="faq-answer">
                             {faq.answer}
                           </p>
                         </motion.div>
@@ -852,15 +875,27 @@ export default function Home() {
                       </>
                     ) : (
                       <>
-                        <PaperPlaneIcon size={18} filled={true} style={{ marginRight: '8px' }} /> {t('contact.sendBtn')}
+                        <Send size={18} style={{ marginRight: '8px' }} /> {t('contact.sendBtn')}
                       </>
                     )}
                   </button>
 
                   {formStatus === 'error' && (
-                    <div className="form-status-alert error" style={{ marginTop: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#ef4444', fontSize: '0.875rem' }}>
-                      <AlertCircle size={16} style={{ flexShrink: 0 }} />
-                      <span>{formErrorMsg || t('contact.sentError')}</span>
+                    <div className="form-status-alert error" style={{ marginTop: '0.85rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#ef4444', fontSize: '0.875rem' }}>
+                        <AlertCircle size={16} style={{ flexShrink: 0 }} />
+                        <span>{formErrorMsg || t('contact.sentError')}</span>
+                      </div>
+                      <a 
+                        href={`mailto:azilmohamed051@gmail.com?subject=${encodeURIComponent(formState.subject.trim() || 'Contact Portfolio Mohamed Azil')}&body=${encodeURIComponent(`De: ${formState.name.trim()} (${formState.email.trim()})\n\n${formState.message.trim()}`)}`}
+                        className="form-fallback-mailto-btn"
+                        target="_blank"
+                        rel="noreferrer"
+                        title={isFrench ? "Envoyer directement via votre application de messagerie" : "Send directly via your email client"}
+                      >
+                        <Mail size={14} />
+                        <span>{isFrench ? 'Envoyer directement par email (mailto)' : 'Send directly via email (mailto)'}</span>
+                      </a>
                     </div>
                   )}
                 </form>

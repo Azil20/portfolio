@@ -188,6 +188,9 @@ export default function Navigation() {
       </div>
 
       <div className="mobile-nav-controls">
+        <button onClick={toggleTheme} className="theme-toggle" aria-label="Toggle Theme" title={theme === 'dark' ? "Switch to Light Mode" : "Switch to Dark Mode"}>
+          {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+        </button>
         <div className="lang-switcher-pill" role="group" aria-label="Language selection">
           <button
             type="button"

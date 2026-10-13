@@ -88,7 +88,7 @@
     "items": {
       "bma": {
         "title": "BMA — Compagnon IA Multilingue pour la Santé Mentale",
-        "badge": "NLP & IA Générative • Edge + Cloud",
+        "badge": "NLP & IA Générative",
         "description": "Système conversationnel hybride associant un classifieur DistilBERT fine-tuné (intentions & émotions) et un modèle génératif Google Gemini avec basculement automatique multi-modèles (haute disponibilité).",
         "multilingualTag": "Multilingue (Arabe, FR, EN)",
         "highlights": "Module prioritaire de détection des signaux de détresse avec redirection d'urgence (lignes 15/3114) • Support multilingue (Arabe, Français, Anglais)",
@@ -109,7 +109,7 @@
       },
       "fraudguard": {
         "title": "FraudGuard — Système de Détection de Fraude Bancaire",
-        "badge": "Imbalanced ML & Explicabilité • Production",
+        "badge": "ML Déséquilibré • Production",
         "description": "Pipeline de Machine Learning pour transactions hautement déséquilibrées (0,17% de fraudes) avec optimisation rigoureuse des courbes PR-AUC et ROC-AUC.",
         "highlights": "Explicabilité complète par valeurs SHAP et application web Flask pour le scoring et l'analyse de risque des transactions en temps réel",
         "archOverview": "Pipeline de Machine Learning de production spécialement conçu pour le déséquilibre de classe sévère (0,17% de fraudes), intégrant rééchantillonnage hybride, matrice de coût asymétrique et explicabilité réglementaire intégrale via SHAP.",
@@ -129,7 +129,7 @@
       },
       "intelej": {
         "title": "IntelEJ Medical Center — Plateforme de Santé & Assistant IA",
-        "badge": "Full-Stack Healthcare IA • Entreprise",
+        "badge": "Healthcare IA • Entreprise",
         "description": "Plateforme médicale full-stack dotée de tableaux de bord avec contrôle d'accès (portails Médecin et Patient) et prise de rendez-vous en ligne.",
         "highlights": "Intégration de l'assistant médical intelligent Al-Rāzī pour le pré-diagnostic et le triage des requêtes en arabe, français et anglais",
         "archOverview": "Plateforme clinique full-stack moderne conçue avec React 18, Supabase et la sécurité Postgres Row Level Security (RLS), articulée autour de l'assistant Al-Rāzī pour automatiser le triage médical et la prise de rendez-vous.",
@@ -170,6 +170,7 @@
       "db": "Bases de Données",
       "db_adv": "Bases de données avancées",
       "tools": "Outils & Méthodologie",
+      "tools_and_languages": "Outils, Méthodes & Langues",
       "tools_problem": "Résolution de problèmes",
       "tools_team": "Travail d’équipe",
       "tools_rigor": "Rigueur scientifique",

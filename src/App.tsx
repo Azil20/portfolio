@@ -4,14 +4,14 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navigation from './components/Navigation';
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
-import CustomCursor from './components/CustomCursor';
+import UserCursor from './components/UserCursor';
 
 const Chatbot = lazy(() => import('./components/Chatbot'));
 
 function App() {
   return (
     <Router>
-      <CustomCursor />
+      <UserCursor />
       <Navigation />
       <Routes>
         <Route path="/" element={<Home />} />

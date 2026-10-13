@@ -224,21 +224,18 @@ function Face({
       // On mobile: baseline is lowered to -0.18 (-0.14 when chat open) so the top hair tufts (reaching +1.67)
       // have generous headroom and are NEVER clipped or hidden by the top edge of the canvas!
       // On PC: maintains original (isChatOpen ? -0.04 : -0.08) position completely untouched.
-      const baseY = isMobile
-        ? (isChatOpen ? -0.14 : -0.18)
-        : (isChatOpen ? -0.04 : -0.08);
+      // Base Y position & headroom: generous headroom on both laptop and mobile so top hair is never clipped
+      const baseY = isChatOpen ? -0.14 : -0.18;
 
-      const bobY = (isMobile && !isSleeping && !isReading)
+      const bobY = (!isSleeping && !isReading)
         ? Math.sin(t * floatSpeed) * floatAmp + Math.sin(t * (floatSpeed * 2)) * 0.014
         : Math.sin(t * floatSpeed) * floatAmp;
 
       groupRef.current.position.y = baseY + bobY;
       groupRef.current.position.z = 0;
 
-      // 3D Model Scale:
-      // On mobile only: exactly +3% bigger (1.03) as requested!
-      // On PC: strictly 1.0 (unchanged)
-      const modelScale = isMobile ? 1.03 : 1.0;
+      // 3D Model Scale: 1.03 for full clarity
+      const modelScale = 1.03;
       groupRef.current.scale.set(modelScale, modelScale, modelScale);
 
       // Position X movement for fetching the book out of screen!
@@ -261,16 +258,15 @@ function Face({
       groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, targetX, xLerpSpeed);
 
       // Head orientation angles:
-      // On PC: seamlessly follows user's mouse cursor.
-      // On mobile: displays lively, curious glances, cheerful tilts, and alert nods full of energy!
-      const mobileEnergyCycle = t * 1.1;
-      const energeticYaw = Math.sin(mobileEnergyCycle * 0.8) * 0.22 + Math.sin(mobileEnergyCycle * 2.2) * 0.07;
-      const energeticPitch = -0.07 + Math.cos(mobileEnergyCycle * 1.3) * 0.09 + Math.sin(mobileEnergyCycle * 2.5) * 0.03;
-      const energeticRoll = Math.sin(mobileEnergyCycle * 1.5) * 0.08 + Math.cos(mobileEnergyCycle * 0.7) * 0.04;
+      // Lively, curious glances, cheerful tilts, and alert nods with seamless mouse responsiveness
+      const energyCycle = t * 1.1;
+      const energeticYaw = Math.sin(energyCycle * 0.8) * 0.22 + Math.sin(energyCycle * 2.2) * 0.07;
+      const energeticPitch = -0.07 + Math.cos(energyCycle * 1.3) * 0.09 + Math.sin(energyCycle * 2.5) * 0.03;
+      const energeticRoll = Math.sin(energyCycle * 1.5) * 0.08 + Math.cos(energyCycle * 0.7) * 0.04;
 
-      let targetYaw = isMobile ? energeticYaw : mousePosRef.current.x;
-      let targetPitch = isMobile ? energeticPitch : mousePosRef.current.y;
-      let targetZ = isMobile ? energeticRoll : Math.sin(t * 1) * 0.04;
+      let targetYaw = isMobile ? energeticYaw : (mousePosRef.current.x !== 0 ? mousePosRef.current.x : energeticYaw * 0.7);
+      let targetPitch = isMobile ? energeticPitch : (mousePosRef.current.y !== 0 ? mousePosRef.current.y : energeticPitch * 0.7);
+      let targetZ = isMobile ? energeticRoll : (mousePosRef.current.x !== 0 ? Math.sin(t * 1) * 0.04 : energeticRoll);
 
       if (planeFlightRef?.current?.active) {
         const elapsed = (performance.now() - planeFlightRef.current.startTime) / 1000;
@@ -1058,16 +1054,16 @@ export default function Chatbot() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // On mobile, show the friendly agent bubble briefly when loaded
+  // Show the friendly agent bubble briefly when loaded
   useEffect(() => {
-    if (isMobile && !isOpen) {
+    if (!isOpen) {
       setShowAgentBubble(true);
       const timer = setTimeout(() => {
         setShowAgentBubble(false);
       }, 5000);
       return () => clearTimeout(timer);
     }
-  }, [isMobile]);
+  }, []);
 
   const mousePosRef = useRef({ x: 0, y: 0 });
   const fireflyProgressRef = useRef(0);
@@ -1359,9 +1355,8 @@ export default function Chatbot() {
     }
   };
 
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || isStreaming) return;
+  const sendUserText = async (textToSend: string) => {
+    if (!textToSend.trim() || isStreaming) return;
 
     // Trigger paper plane flight animation & 3D model tracking
     const sendBtn = document.querySelector('.chat-send');
@@ -1376,7 +1371,7 @@ export default function Chatbot() {
     };
     setFlyingPlane({ x: startX, y: startY, key: Date.now() });
 
-    const userText = input.trim();
+    const userText = textToSend.trim();
     setInput('');
 
     // On mobile, blur active input to gracefully dismiss on-screen keyboard and prevent stuck zoom
@@ -1424,6 +1419,12 @@ export default function Chatbot() {
         setIsStreaming(false);
       }
     });
+  };
+
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || isStreaming) return;
+    await sendUserText(input);
   };
 
   const isSleeping = sleepStage === 'sleeping';
@@ -1488,6 +1489,88 @@ export default function Chatbot() {
                 )}
               </div>
             ))}
+
+            {/* Inquiry Topics matching user reference image */}
+            {messages.length <= 1 && !isStreaming && (
+              <div className="chat-inquiry-section">
+                <div className="chat-inquiry-header">
+                  <span>INQUIRY TOPICS</span>
+                </div>
+                <div className="chat-inquiry-grid">
+                  <button
+                    type="button"
+                    className="chat-inquiry-card"
+                    onClick={() => sendUserText(i18n.language?.startsWith('fr') 
+                      ? "Présente-moi Mohamed Azil, son profil, son parcours et ses compétences clés." 
+                      : "Who is Mohamed? Tell me about his architecture background, Master degree, and key capabilities."
+                    )}
+                  >
+                    <span className="inquiry-card-title">
+                      {i18n.language?.startsWith('fr') ? "Qui est Mohamed ?" : "Who is Med?"}
+                    </span>
+                    <span className="inquiry-card-desc">
+                      {i18n.language?.startsWith('fr') 
+                        ? "Parcours ingénieur, Master IA & Big Data, capacités" 
+                        : "Architecture, background, and capabilities"}
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="chat-inquiry-card"
+                    onClick={() => sendUserText(i18n.language?.startsWith('fr')
+                      ? "Quelle est la stack technique et l'expertise de Mohamed en IA, Machine Learning et Big Data ?"
+                      : "What is Mohamed's technical stack in AI, Machine Learning, and Big Data?"
+                    )}
+                  >
+                    <span className="inquiry-card-title">
+                      {i18n.language?.startsWith('fr') ? "Stack IA & Machine Learning" : "AI & Machine Learning Stack"}
+                    </span>
+                    <span className="inquiry-card-desc">
+                      {i18n.language?.startsWith('fr')
+                        ? "PyTorch, Transformers NLP, Spark, Scikit-Learn"
+                        : "PyTorch, Transformers NLP, Spark, and Scikit-Learn"}
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="chat-inquiry-card"
+                    onClick={() => sendUserText(i18n.language?.startsWith('fr')
+                      ? "Parle-moi des projets phares de Mohamed, en particulier BMA (NLP & IA Générative) et FraudGuard."
+                      : "Tell me about Mohamed's flagship projects, especially BMA (NLP & GenAI) and FraudGuard."
+                    )}
+                  >
+                    <span className="inquiry-card-title">
+                      {i18n.language?.startsWith('fr') ? "Projets Phares & NLP" : "Flagship AI Projects"}
+                    </span>
+                    <span className="inquiry-card-desc">
+                      {i18n.language?.startsWith('fr')
+                        ? "BMA GenAI Edge+Cloud, DistilBERT, FraudGuard SHAP"
+                        : "BMA GenAI Edge+Cloud, DistilBERT, FraudGuard SHAP"}
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="chat-inquiry-card"
+                    onClick={() => sendUserText(i18n.language?.startsWith('fr')
+                      ? "Quelles sont les disponibilités de Mohamed pour un stage PFE de fin d'études ou une opportunité d'embauche ?"
+                      : "What is Mohamed's availability for a 2025/2026 End-of-Studies PFE internship or engineering role?"
+                    )}
+                  >
+                    <span className="inquiry-card-title">
+                      {i18n.language?.startsWith('fr') ? "Disponibilité Stage PFE" : "Internship Availability"}
+                    </span>
+                    <span className="inquiry-card-desc">
+                      {i18n.language?.startsWith('fr')
+                        ? "Stage PFE fin d'études 2025/2026 & opportunités ingénieur"
+                        : "2025/2026 End-of-Studies PFE and engineering roles"}
+                    </span>
+                  </button>
+                </div>
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </div>
 
@@ -1509,8 +1592,8 @@ export default function Chatbot() {
           </form>
         </div>
 
-        {/* Speech / Welcome back bubble */}
-        {!isOpen && (showWelcomeBubble || (isMobile && showAgentBubble)) && (
+        {/* Speech / Welcome back bubble on laptop and mobile */}
+        {!isOpen && (showWelcomeBubble || showAgentBubble) && (
           <div className="chatbot-welcome-bubble">
             {welcomeBubbleText || t('chatbot.tapToChat', 'Chat with Med')}
           </div>
@@ -1522,6 +1605,7 @@ export default function Chatbot() {
           onClick={() => setIsOpen(!isOpen)}
           onPointerEnter={() => !isMobile && setIsHoveringCanvas(true)}
           onPointerLeave={() => setIsHoveringCanvas(false)}
+          onPointerMove={() => !isMobile && !isHoveringCanvas && setIsHoveringCanvas(true)}
           title={isOpen ? "Click to minimize chat" : "Click to chat with Med"}
           style={{ zIndex: 1000 }}
         >

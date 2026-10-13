@@ -48,40 +48,6 @@
   box-shadow: 0 0 0 1.5px #ffffff, 0 0 10px rgba(2, 132, 199, 0.9);
 }
 
-/* Luminous Light Orb Mode when hovering the 3D model - matches blue illumination in photos */
-@keyframes lightOrbPulse {
-  0%, 100% {
-    box-shadow:
-      0 0 22px #0038ff,
-      0 0 45px rgba(0, 56, 255, 0.82),
-      0 0 75px rgba(56, 189, 248, 0.6),
-      inset 0 0 14px rgba(56, 189, 248, 0.7);
-  }
-  50% {
-    box-shadow:
-      0 0 28px #0052ff,
-      0 0 58px rgba(0, 56, 255, 0.95),
-      0 0 95px rgba(56, 189, 248, 0.75),
-      inset 0 0 20px rgba(56, 189, 248, 0.85);
-  }
-}
-
-.custom-cursor-ring.is-light-mode {
-  border-color: rgba(96, 165, 250, 0.95) !important;
-  background: radial-gradient(circle, rgba(56, 189, 248, 0.42) 0%, rgba(0, 56, 255, 0.25) 52%, rgba(0, 56, 255, 0.06) 100%) !important;
-  animation: lightOrbPulse 1.9s ease-in-out infinite;
-  backdrop-filter: blur(2px);
-}
-
-.custom-cursor-dot.is-light-mode {
-  background-color: #ffffff !important;
-  box-shadow:
-    0 0 8px #ffffff,
-    0 0 18px #38bdf8,
-    0 0 35px #0038ff,
-    0 0 55px #0038ff !important;
-}
-
 /* Completely remove and hide custom cursor on mobile / touch devices */
 @media (max-width: 768px), (pointer: coarse), (hover: none) {
   .custom-cursor-container,

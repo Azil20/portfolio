@@ -88,7 +88,7 @@
     "items": {
       "bma": {
         "title": "BMA — Multilingual AI Mental Health Companion",
-        "badge": "NLP & Generative AI • Edge + Cloud",
+        "badge": "NLP & Generative AI",
         "description": "Hybrid conversational system combining a fine-tuned DistilBERT classifier (intents & emotions) with a generative Google Gemini model featuring automated multi-model fallback for high availability.",
         "multilingualTag": "Multilingual (Arabic, FR, EN)",
         "highlights": "Priority distress signal detection with emergency routing (lines 15/3114) • Full trilingual support (Arabic, French, English)",
@@ -109,7 +109,7 @@
       },
       "fraudguard": {
         "title": "FraudGuard — Banking Fraud Detection System",
-        "badge": "Imbalanced ML & Explainability • Production",
+        "badge": "Imbalanced ML • Production",
         "description": "Machine Learning pipeline tailored for highly imbalanced transactions (0.17% fraud rate) with rigorous optimization of PR-AUC and ROC-AUC curves.",
         "highlights": "Full explainability using SHAP values and a Flask web application for real-time transaction scoring and risk analysis",
         "archOverview": "An end-to-end Machine Learning pipeline specifically engineered for extreme class imbalance (0.17% fraud rate), featuring cost-sensitive ensemble modeling, PR-AUC optimization, and full regulatory explainability using SHAP values.",
@@ -129,7 +129,7 @@
       },
       "intelej": {
         "title": "IntelEJ Medical Center — Healthcare Platform & AI Assistant",
-        "badge": "Full-Stack Healthcare AI • Enterprise",
+        "badge": "Healthcare AI • Enterprise",
         "description": "Full-stack medical platform with role-based access control dashboards (Doctor and Patient portals) and automated online appointment management.",
         "highlights": "Integration of Al-Rāzī intelligent assistant for pre-diagnosis and request triage in Arabic, French, and English",
         "archOverview": "A full-stack clinical platform powered by React 18, Supabase, and Postgres Row Level Security, integrated with the Al-Rāzī intelligent medical triage assistant for symptom intake and appointment automation.",
@@ -170,6 +170,7 @@
       "db": "Databases",
       "db_adv": "Advanced Databases",
       "tools": "Tools & Methodology",
+      "tools_and_languages": "Tools, Methods & Languages",
       "tools_problem": "Problem Solving",
       "tools_team": "Teamwork",
       "tools_rigor": "Scientific Rigor",
