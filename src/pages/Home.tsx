@@ -993,69 +993,71 @@ export default function Home() {
                 <X size={20} />
               </button>
 
-              <div className="arch-modal-header">
-                <div className="arch-modal-meta">
-                  <span className="project-badge">{activeArchProject.badge}</span>
-                  <span className="text-muted" style={{ fontSize: '0.85rem' }}>
-                    • {t('projects.architecture_title')}
-                  </span>
+              <div className="arch-modal-body">
+                <div className="arch-modal-header">
+                  <div className="arch-modal-meta">
+                    <span className="project-badge">{activeArchProject.badge}</span>
+                    <span className="text-muted" style={{ fontSize: '0.85rem' }}>
+                      • {t('projects.architecture_title')}
+                    </span>
+                  </div>
+                  <h2 className="arch-modal-title">{activeArchProject.title}</h2>
+                  <p className="arch-modal-subtitle">{activeArchProject.subtitle}</p>
                 </div>
-                <h2 className="arch-modal-title">{activeArchProject.title}</h2>
-                <p className="arch-modal-subtitle">{activeArchProject.subtitle}</p>
-              </div>
 
-              {/* Architecture Overview */}
-              <div className="arch-modal-overview">
-                <p>{activeArchProject.archOverview}</p>
-              </div>
+                {/* Architecture Overview */}
+                <div className="arch-modal-overview">
+                  <p>{activeArchProject.archOverview}</p>
+                </div>
 
-              {/* Engineering Highlights & Benchmarks */}
-              <div className="arch-section-heading">
-                <Sparkles size={18} style={{ color: '#38bdf8' }} />
-                <span>{t('projects.pillars_heading')}</span>
-              </div>
-              <div className="arch-pillars-grid">
-                {activeArchProject.pillars.map((pil, pIdx) => (
-                  <div key={pIdx} className="arch-pillar-card">
-                    <div className="arch-pillar-val">{pil.val}</div>
-                    <div className="arch-pillar-label">{pil.label}</div>
-                    <div className="arch-pillar-desc">{pil.desc}</div>
-                  </div>
-                ))}
-              </div>
-
-              {/* End-to-End Pipeline & Data Flow */}
-              <div className="arch-section-heading">
-                <Layers size={18} style={{ color: '#38bdf8' }} />
-                <span>{t('projects.pipeline_heading')}</span>
-              </div>
-              <div className="arch-pipeline-list">
-                {activeArchProject.steps.map((step, sIdx) => (
-                  <div key={sIdx} className="arch-pipeline-step">
-                    <div className="arch-step-number">0{sIdx + 1}</div>
-                    <div className="arch-step-content">
-                      <h4 className="arch-step-title">{step.title}</h4>
-                      <p className="arch-step-desc">{step.desc}</p>
+                {/* Engineering Highlights & Benchmarks */}
+                <div className="arch-section-heading">
+                  <Sparkles size={18} style={{ color: '#38bdf8' }} />
+                  <span>{t('projects.pillars_heading')}</span>
+                </div>
+                <div className="arch-pillars-grid">
+                  {activeArchProject.pillars.map((pil, pIdx) => (
+                    <div key={pIdx} className="arch-pillar-card">
+                      <div className="arch-pillar-val">{pil.val}</div>
+                      <div className="arch-pillar-label">{pil.label}</div>
+                      <div className="arch-pillar-desc">{pil.desc}</div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
 
-              {/* Tech Stack Cluster */}
-              <div className="tag-cluster" style={{ marginTop: '1.5rem', marginBottom: '1.5rem' }}>
-                {activeArchProject.tags.map((tag, tIdx) => (
-                  <span key={tIdx} className="tech-badge">{tag}</span>
-                ))}
-              </div>
+                {/* End-to-End Pipeline & Data Flow */}
+                <div className="arch-section-heading">
+                  <Layers size={18} style={{ color: '#38bdf8' }} />
+                  <span>{t('projects.pipeline_heading')}</span>
+                </div>
+                <div className="arch-pipeline-list">
+                  {activeArchProject.steps.map((step, sIdx) => (
+                    <div key={sIdx} className="arch-pipeline-step">
+                      <div className="arch-step-number">0{sIdx + 1}</div>
+                      <div className="arch-step-content">
+                        <h4 className="arch-step-title">{step.title}</h4>
+                        <p className="arch-step-desc">{step.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
 
-              <div className="arch-modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-outline"
-                  onClick={() => setActiveArchProject(null)}
-                >
-                  {t('projects.close_architecture')}
-                </button>
+                {/* Tech Stack Cluster */}
+                <div className="tag-cluster" style={{ marginTop: '1.5rem', marginBottom: '1.5rem' }}>
+                  {activeArchProject.tags.map((tag, tIdx) => (
+                    <span key={tIdx} className="tech-badge">{tag}</span>
+                  ))}
+                </div>
+
+                <div className="arch-modal-footer">
+                  <button
+                    type="button"
+                    className="btn btn-outline"
+                    onClick={() => setActiveArchProject(null)}
+                  >
+                    {t('projects.close_architecture')}
+                  </button>
+                </div>
               </div>
             </motion.div>
           </motion.div>
