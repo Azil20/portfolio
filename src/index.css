@@ -1332,10 +1332,10 @@ a {
     right: 0.9rem;
   }
 
-  /* +3% larger on mobile (from 95px to 98px) */
+  /* Adjusted 3D model canvas sizing on mobile for optimal visual impact (122px) */
   .chatbot-canvas-wrapper {
-    width: 98px;
-    height: 98px;
+    width: 122px;
+    height: 122px;
   }
 
   .chatbot-canvas-wrapper.active {
@@ -1360,13 +1360,15 @@ a {
     -webkit-text-size-adjust: 100%;
   }
 
+  .chatbot-welcome-bubble,
   .chatbot-agent-bubble {
-    bottom: 84px;
-    right: 0px;
-    font-size: 0.72rem;
-    padding: 0.4rem 0.75rem;
+    bottom: 124px;
+    right: 8px;
+    font-size: 0.78rem;
+    padding: 6px 12px;
     max-width: calc(100vw - 2.5rem);
     white-space: normal;
+    border-radius: 12px;
   }
 
   .chatbot-zzz-wrapper {
