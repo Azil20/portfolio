@@ -1182,46 +1182,7 @@ a {
   transform: scale(0.95);
 }
 
-/* Flying Paper Plane Effect */
-.flying-paper-plane-container {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 10001;
-  overflow: visible;
-}
 
-.flying-paper-plane-wrapper {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 32px;
-  height: 32px;
-  pointer-events: none;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
-}
-
-.flying-plane-trail {
-  position: absolute;
-  top: 50%;
-  right: 55%;
-  width: 95px;
-  height: 2.5px;
-  background: linear-gradient(90deg, transparent 0%, rgba(56, 189, 248, 0.4) 60%, rgba(56, 189, 248, 0.8) 100%);
-  border-radius: 999px;
-  transform-origin: right center;
-  pointer-events: none;
-}
-
-.flying-plane-spark {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: #ffffff;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  pointer-events: none;
-}
 
 /* Floating Agent Speech Bubble */
 .chatbot-agent-bubble {

@@ -117,7 +117,6 @@ function Face({
   fireflyProgressRef,
   fireflyTrackingRef,
   wakeStartTimeRef,
-  planeFlightRef,
   isChatOpen,
   isThinking = false,
   isSpeaking = false,
@@ -129,7 +128,6 @@ function Face({
   fireflyProgressRef: React.MutableRefObject<number>;
   fireflyTrackingRef: React.MutableRefObject<{ x: number, y: number }>;
   wakeStartTimeRef: React.MutableRefObject<number>;
-  planeFlightRef?: React.MutableRefObject<{ active: boolean; startTime: number; duration: number }>;
   isChatOpen: boolean;
   isThinking?: boolean;
   isSpeaking?: boolean;
@@ -268,29 +266,7 @@ function Face({
       let targetPitch = isMobile ? energeticPitch : (mousePosRef.current.y !== 0 ? mousePosRef.current.y : energeticPitch * 0.7);
       let targetZ = isMobile ? energeticRoll : (mousePosRef.current.x !== 0 ? Math.sin(t * 1) * 0.04 : energeticRoll);
 
-      if (planeFlightRef?.current?.active) {
-        const elapsed = (performance.now() - planeFlightRef.current.startTime) / 1000;
-        const totalDuration = planeFlightRef.current.duration / 1000;
-        const p = Math.min(1, Math.max(0, elapsed / totalDuration));
-
-        if (p < 1) {
-          // Med actively tracks the paper plane soaring across from the send button towards the right!
-          // Yaw sweeps smoothly from -0.48 (left at chat input) to +0.88 (far right into the distance)
-          targetYaw = THREE.MathUtils.lerp(-0.48, 0.88, Math.pow(p, 0.82));
-          // Pitch arcs high as the plane climbs into the digital sky
-          targetPitch = -0.16 - Math.sin(p * Math.PI) * 0.24;
-          // Roll tilts head slightly with focused curiosity
-          targetZ = Math.sin(p * Math.PI) * 0.12;
-        } else if (elapsed < totalDuration + 0.35) {
-          // Plane has just vanished off the right! Holds glance watching it disappear
-          targetYaw = 0.86;
-          targetPitch = -0.14;
-          targetZ = 0.04;
-        } else {
-          // Finished flight tracking sequence
-          planeFlightRef.current.active = false;
-        }
-      } else if (isThinking) {
+      if (isThinking) {
         // Pensive thinking pose: naturally tilted upwards, curious ponderous gaze into thought
         targetYaw = -0.22 + Math.sin(t * 1.4) * 0.08;
         targetPitch = -0.18 + Math.cos(t * 1.6) * 0.04; // natural thoughtful upward ponder
@@ -367,8 +343,7 @@ function Face({
         targetZ = 0;
       }
 
-      const isFlightActive = Boolean(planeFlightRef?.current?.active);
-      const lerpSpeed = isFlightActive ? 0.16 : (isThinking ? 0.12 : (isWaking ? 0.16 : (isReading ? 0.08 : (isFireflies ? 0.07 : 0.1))));
+      const lerpSpeed = isThinking ? 0.12 : (isWaking ? 0.16 : (isReading ? 0.08 : (isFireflies ? 0.07 : 0.1)));
       groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, targetYaw, lerpSpeed);
       groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, targetPitch, lerpSpeed);
       groupRef.current.rotation.z = THREE.MathUtils.lerp(groupRef.current.rotation.z, targetZ, 0.1);
@@ -425,10 +400,7 @@ function Face({
     // Eyes logic
     let targetEyeScale = 2.5;
 
-    if (planeFlightRef?.current?.active) {
-      // Alert, enthusiastic eyes tracking the flying message
-      targetEyeScale = 2.8;
-    } else if (isThinking) {
+    if (isThinking) {
       // Pensive calculating eyes with subtle thoughtful focus
       targetEyeScale = 1.7;
     } else if (isSpeaking) {
@@ -940,93 +912,7 @@ function ScreenFireflies({
   );
 }
 
-interface FlyingPaperPlaneProps {
-  startX: number;
-  startY: number;
-  onComplete: () => void;
-}
 
-function FlyingPaperPlane({ startX, startY, onComplete }: FlyingPaperPlaneProps) {
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    let animId: number;
-    const startTime = performance.now();
-    const duration = 1400; // 1.4s flight time
-
-    const step = (now: number) => {
-      const elapsed = now - startTime;
-      const p = Math.min(1, elapsed / duration);
-      setProgress(p);
-
-      if (p < 1) {
-        animId = requestAnimationFrame(step);
-      } else {
-        onComplete();
-      }
-    };
-
-    animId = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(animId);
-  }, [onComplete]);
-
-  // Flight path calculations:
-  // Starts at send button (startX, startY)
-  // Accelerates across screen to the right until it completely vanishes beyond right viewport edge
-  const targetX = window.innerWidth + 130;
-  const liftHeight = Math.max(160, Math.min(260, window.innerHeight * 0.35));
-
-  // Horizontal nonlinear acceleration curve
-  const easedX = Math.pow(progress, 1.25);
-  const currentX = THREE.MathUtils.lerp(startX, targetX, easedX);
-
-  // Parabolic aerodynamic flight arc (climbs high, then swoops gracefully forward)
-  const arcY = -Math.sin(Math.pow(progress, 0.78) * Math.PI * 0.95) * liftHeight;
-  const currentY = startY + arcY - (progress * 50);
-
-  // Dynamic aerodynamic banking: starts pointing up-right, levels slightly, accelerates right
-  const rotation = THREE.MathUtils.lerp(-45, 18, Math.pow(progress, 0.85));
-
-  // Scale: liftoff swelling, then shrinks gracefully as it vanishes into distance
-  const scale = progress < 0.22
-    ? THREE.MathUtils.lerp(0.85, 1.3, progress / 0.22)
-    : THREE.MathUtils.lerp(1.3, 0.75, (progress - 0.22) / 0.78);
-
-  // Fading out as it rockets past the right screen boundary
-  const opacity = progress > 0.86 ? THREE.MathUtils.lerp(1, 0, (progress - 0.86) / 0.14) : 1;
-
-  return (
-    <div className="flying-paper-plane-container">
-      <div
-        className="flying-paper-plane-wrapper"
-        style={{
-          transform: `translate3d(${currentX}px, ${currentY}px, 0) rotate(${rotation}deg) scale(${scale})`,
-          opacity,
-          transformOrigin: 'center center'
-        }}
-      >
-        {/* Aerodynamic glowing light-blue vapor trail */}
-        <div
-          className="flying-plane-trail"
-          style={{
-            transform: `rotate(180deg) scaleY(${1 + Math.sin(progress * Math.PI) * 0.8})`,
-            opacity: Math.sin(progress * Math.PI) * 0.9
-          }}
-        />
-        {/* Trailing energy sparks */}
-        <div
-          className="flying-plane-spark"
-          style={{
-            top: '40%',
-            left: '-16px',
-            opacity: Math.sin(progress * Math.PI)
-          }}
-        />
-        <PaperPlaneIcon size={26} filled={true} style={{ color: '#38bdf8' }} />
-      </div>
-    </div>
-  );
-}
 
 export default function Chatbot() {
   const { t, i18n } = useTranslation();
@@ -1072,13 +958,7 @@ export default function Chatbot() {
   const sleepStageRef = useRef<SleepStage>('awake');
   const [fireflyProgress, setFireflyProgress] = useState(0);
 
-  // Paper plane flight tracking ref and state
-  const planeFlightRef = useRef<{ active: boolean; startTime: number; duration: number }>({
-    active: false,
-    startTime: 0,
-    duration: 1400
-  });
-  const [flyingPlane, setFlyingPlane] = useState<{ x: number; y: number; key: number } | null>(null);
+
 
   const [messages, setMessages] = useState<Message[]>([
     { text: t('chatbot.initialGreeting'), isBot: true }
@@ -1358,18 +1238,7 @@ export default function Chatbot() {
   const sendUserText = async (textToSend: string) => {
     if (!textToSend.trim() || isStreaming) return;
 
-    // Trigger paper plane flight animation & 3D model tracking
-    const sendBtn = document.querySelector('.chat-send');
-    const rect = sendBtn?.getBoundingClientRect();
-    const startX = rect ? rect.left + rect.width / 2 - 14 : window.innerWidth - 65;
-    const startY = rect ? rect.top + rect.height / 2 - 14 : window.innerHeight - 200;
 
-    planeFlightRef.current = {
-      active: true,
-      startTime: performance.now(),
-      duration: 1400
-    };
-    setFlyingPlane({ x: startX, y: startY, key: Date.now() });
 
     const userText = textToSend.trim();
     setInput('');
@@ -1448,15 +1317,7 @@ export default function Chatbot() {
         onComplete={handleFireflyComplete}
       />
 
-      {/* Flying Paper Plane Animation */}
-      {flyingPlane && (
-        <FlyingPaperPlane
-          key={flyingPlane.key}
-          startX={flyingPlane.x}
-          startY={flyingPlane.y}
-          onComplete={() => setFlyingPlane(null)}
-        />
-      )}
+
 
       <div className="chatbot-container">
         {/* Chat Window */}
@@ -1621,7 +1482,6 @@ export default function Chatbot() {
               fireflyProgressRef={fireflyProgressRef}
               fireflyTrackingRef={fireflyTrackingRef}
               wakeStartTimeRef={wakeStartTimeRef}
-              planeFlightRef={planeFlightRef}
               isChatOpen={isOpen}
               isThinking={isBotThinking}
               isSpeaking={isBotSpeaking}
