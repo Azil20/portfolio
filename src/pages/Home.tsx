@@ -352,13 +352,13 @@ export default function Home() {
         <section className="hero-section" id="hero">
           <motion.div 
             style={{ y: isMobile ? 0 : y }}
-            initial={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: "easeOut" }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="container"
           >
             <div className="hero-status-pill">
-              <span className="status-indicator-dot"></span>
+              <span className="status-indicator-dot pulse"></span>
               <span>{t('hero.status')}</span>
             </div>
             
@@ -444,13 +444,19 @@ export default function Home() {
         {/* 1. Experiences Section */}
         <section className="section" id="experiences">
           <div className="container">
-            <div className="section-header">
+            <motion.div 
+              className="section-header"
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            >
               <span className="section-eyebrow">{t('journey.eyebrow')}</span>
               <h2 className="section-title">{t('journey.title')}</h2>
               <p className="text-muted section-desc">
                 {t('journey.description')}
               </p>
-            </div>
+            </motion.div>
 
             {/* Filter Tabs */}
             <div className="timeline-filter-tabs">
@@ -522,19 +528,29 @@ export default function Home() {
         {/* 2. Projects Section */}
         <section className="section" id="projects" style={{ background: 'var(--accent-color)' }}>
           <div className="container">
-            <div className="section-header">
+            <motion.div 
+              className="section-header"
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            >
               <span className="section-eyebrow">{t('projects.eyebrow')}</span>
               <h2 className="section-title">{t('projects.title')}</h2>
               <p className="text-muted section-desc">
                 {t('projects.description')}
               </p>
-            </div>
+            </motion.div>
 
             <div className="projects-grid">
               {projects.map((proj, idx) => (
-                <div 
+                <motion.div 
                   key={proj.id} 
                   className={`project-card ${proj.featured ? 'featured' : ''}`}
+                  initial={{ opacity: 0, y: 32, scale: 0.98 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.52, delay: idx * 0.1, ease: [0.16, 1, 0.3, 1] }}
                   onClick={() => setActiveArchProject(proj)}
                   role="button"
                   tabIndex={0}
@@ -579,7 +595,7 @@ export default function Home() {
                     <span>{t('projects.view_architecture')}</span>
                     <ArrowUpRight size={16} />
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -588,24 +604,37 @@ export default function Home() {
         {/* 3. Skills & Compétences Section */}
         <section className="section" id="skills">
           <div className="container">
-            <div className="section-header">
+            <motion.div 
+              className="section-header"
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            >
               <span className="section-eyebrow">{t('skills.eyebrow')}</span>
               <h2 className="section-title">{t('skills.title')}</h2>
               <p className="text-muted section-desc">
                 {t('skills.description')}
               </p>
-            </div>
+            </motion.div>
 
             <div className="skills-grid">
               {skillGroups.map((group, idx) => (
-                <div key={idx} className="skill-category-card">
+                <motion.div 
+                  key={idx} 
+                  className="skill-category-card"
+                  initial={{ opacity: 0, y: 24, scale: 0.98 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.48, delay: idx * 0.07, ease: [0.16, 1, 0.3, 1] }}
+                >
                   <h3 className="skill-group-title">{group.title}</h3>
                   <div className="tag-cluster" style={{ marginTop: '1rem' }}>
                     {group.skills.map((skill, sIdx) => (
                       <span key={sIdx} className="tech-badge">{skill}</span>
                     ))}
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -614,21 +643,32 @@ export default function Home() {
         {/* 4. FAQ Section */}
         <section className="section" id="faq">
           <div className="container" style={{ maxWidth: '960px' }}>
-            <div className="section-header" style={{ textAlign: 'center', margin: '0 auto 2.25rem auto' }}>
+            <motion.div 
+              className="section-header" 
+              style={{ textAlign: 'center', margin: '0 auto 2.25rem auto' }}
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            >
               <span className="section-eyebrow">{t('faq.eyebrow')}</span>
               <h2 className="section-title">{t('faq.title')}</h2>
               <p className="text-muted section-desc" style={{ margin: '0 auto' }}>
                 {t('faq.description')}
               </p>
-            </div>
+            </motion.div>
 
             <div className="faq-accordion">
               {faqs.map((faq, idx) => {
                 const isOpen = openFaq === idx;
                 return (
-                  <div 
+                  <motion.div 
                     key={idx} 
                     className={`faq-item ${isOpen ? 'active' : ''}`}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-30px" }}
+                    transition={{ duration: 0.42, delay: idx * 0.05, ease: [0.16, 1, 0.3, 1] }}
                   >
                     <button 
                       type="button"
@@ -672,7 +712,7 @@ export default function Home() {
                         </motion.div>
                       )}
                     </AnimatePresence>
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
@@ -682,17 +722,29 @@ export default function Home() {
         {/* 5. Reach Out Section */}
         <section className="section" id="reach-out" style={{ borderTop: '1px solid var(--border-color)' }}>
           <div className="container">
-            <div className="section-header">
+            <motion.div 
+              className="section-header"
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            >
               <span className="section-eyebrow">{t('contact.eyebrow')}</span>
               <h2 className="section-title">{t('contact.title')}</h2>
               <p className="text-muted section-desc">
                 {t('contact.description')}
               </p>
-            </div>
+            </motion.div>
 
             <div className="reachout-grid">
               {/* Direct channels & info */}
-              <div className="reachout-channels">
+              <motion.div 
+                className="reachout-channels"
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+              >
                 <div className="reachout-status-card">
                   <div className="status-indicator">
                     <span className="status-indicator-dot pulse"></span>
@@ -804,10 +856,16 @@ export default function Home() {
                   </div>
 
                 </div>
-              </div>
+              </motion.div>
 
               {/* Interactive Contact Form */}
-              <div className="reachout-form-wrapper">
+              <motion.div 
+                className="reachout-form-wrapper"
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.55, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
+              >
                 <form className="contact-form" onSubmit={handleSendMessage}>
                   <div className="form-group">
                     <label htmlFor="name" className="form-label">{t('contact.nameLabel')}</label>
@@ -899,7 +957,7 @@ export default function Home() {
                     </div>
                   )}
                 </form>
-              </div>
+              </motion.div>
             </div>
           </div>
         </section>

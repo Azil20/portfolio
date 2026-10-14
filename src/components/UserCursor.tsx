@@ -335,7 +335,7 @@ export function UserCursor({
           xmlns="http://www.w3.org/2000/svg"
           className="user-cursor-svg"
           style={{
-            filter: `drop-shadow(0 2px 8px ${resolvedColor}80)`
+            filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25))'
           }}
         >
           {/* Exact geometry of the blue pointer arrow from reference picture */}
