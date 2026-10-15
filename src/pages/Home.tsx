@@ -23,7 +23,7 @@ import {
   Send
 } from 'lucide-react';
 import Footer from '../components/Footer';
-import ChromeTitle3D from '../components/ChromeTitle3D';
+import ChromeSphere3D from '../components/ChromeSphere3D';
 
 const GithubIcon = ({ size = 20 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -365,8 +365,10 @@ export default function Home() {
             
             <h1 className="display-title">
               Mohamed <br />
-              <span className="sr-only">Azil</span>
-              <ChromeTitle3D />
+              <span className="hero-name-row">
+                <span className="chrome-text">Azil</span>
+                <ChromeSphere3D />
+              </span>
             </h1>
 
             <p className="text-muted hero-desc">

@@ -883,7 +883,7 @@ function ScreenFireflies({
 
       setCoords(newCoords);
 
-      // Broadcast swarm coordinates to window so 3D chrome title reflects fireflies in real-time
+      // Broadcast swarm coordinates to window so 3D chrome sphere reflects fireflies in real-time
       window.dispatchEvent(new CustomEvent('firefly-swarm-flight', {
         detail: {
           active: true,
@@ -1120,7 +1120,7 @@ export default function Chatbot() {
     return () => observer.disconnect();
   }, []);
 
-  // Listen for trigger-fireflies event from 3D Title or user interaction
+  // Listen for trigger-fireflies event from 3D Chrome Sphere or user interaction
   useEffect(() => {
     const handleTriggerFireflies = () => {
       wakeUp();
@@ -1168,7 +1168,9 @@ export default function Chatbot() {
           setSleepStage('awake');
         }, 1150);
       } else if (sleepStageRef.current === 'fireflies') {
-        wakeUp();
+        // Fireflies are actively soaring across the screen; don't cancel on subtle mouse movements
+        resetTimeout(8000);
+        return;
       } else if (sleepStageRef.current === 'awake') {
         wakeUp();
       }
