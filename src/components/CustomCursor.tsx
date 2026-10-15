@@ -1,6 +1,6 @@
-import AdvancedCursor from './AdvancedCursor';
-import type { AdvancedCursorProps } from './AdvancedCursor';
+import UserCursor from './UserCursor';
+import type { UserCursorProps } from './UserCursor';
 
-export type CustomCursorProps = AdvancedCursorProps;
-export { AdvancedCursor };
-export default AdvancedCursor;
+export type CustomCursorProps = UserCursorProps;
+export { UserCursor };
+export default UserCursor;
