@@ -68,7 +68,7 @@ export function UserCursor({
   const [isButtonHovered, setIsButtonHovered] = useState(false);
   const [isOverModel, setIsOverModel] = useState(false);
   const [isMouseDown, setIsMouseDown] = useState(false);
-  const [activeTheme, setActiveTheme] = useState<'dark' | 'light'>('dark');
+  const [activeTheme, setActiveTheme] = useState<'dark' | 'light'>('light');
 
   // Detect theme dynamically
   useEffect(() => {

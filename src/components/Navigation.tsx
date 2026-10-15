@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import OptionWheel from './OptionWheel';
 
 export default function Navigation() {
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState('light');
   const [activeSection, setActiveSection] = useState('experiences');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [headerVisible, setHeaderVisible] = useState(true);
