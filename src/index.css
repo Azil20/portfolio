@@ -552,6 +552,38 @@ a {
   display: inline-block;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.chrome-title-3d-wrapper {
+  display: block;
+  position: relative;
+  height: clamp(52px, 7.5vw, 108px);
+  width: clamp(210px, 30vw, 430px);
+  margin-top: 0.08em;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
+  overflow: visible;
+}
+
+.chrome-title-3d-wrapper canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  overflow: visible;
+}
+
 /* Chatbot UI */
 .chatbot-container {
   position: fixed;

@@ -826,6 +826,15 @@ function ScreenFireflies({
       if (reqIdRef.current) cancelAnimationFrame(reqIdRef.current);
       setCoords([]);
       startTimeRef.current = null;
+      window.dispatchEvent(new CustomEvent('firefly-swarm-flight', {
+        detail: {
+          active: false,
+          p: 0,
+          centroidX: -999,
+          centroidY: -999,
+          fireflies: []
+        }
+      }));
       return;
     }
 
@@ -874,6 +883,17 @@ function ScreenFireflies({
 
       setCoords(newCoords);
 
+      // Broadcast swarm coordinates to window so 3D chrome title reflects fireflies in real-time
+      window.dispatchEvent(new CustomEvent('firefly-swarm-flight', {
+        detail: {
+          active: true,
+          p,
+          centroidX,
+          centroidY,
+          fireflies: newCoords
+        }
+      }));
+
       if (p < 1) {
         reqIdRef.current = requestAnimationFrame(animate);
       } else {
@@ -885,6 +905,15 @@ function ScreenFireflies({
 
     return () => {
       if (reqIdRef.current) cancelAnimationFrame(reqIdRef.current);
+      window.dispatchEvent(new CustomEvent('firefly-swarm-flight', {
+        detail: {
+          active: false,
+          p: 0,
+          centroidX: -999,
+          centroidY: -999,
+          fireflies: []
+        }
+      }));
     };
   }, [active, configs, onProgress, onComplete]);
 
@@ -1089,6 +1118,18 @@ export default function Chatbot() {
     const observer = new MutationObserver(handleThemeChange);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     return () => observer.disconnect();
+  }, []);
+
+  // Listen for trigger-fireflies event from 3D Title or user interaction
+  useEffect(() => {
+    const handleTriggerFireflies = () => {
+      wakeUp();
+      setSleepStage('fireflies');
+      setShowAgentBubble(false);
+    };
+
+    window.addEventListener('trigger-fireflies', handleTriggerFireflies);
+    return () => window.removeEventListener('trigger-fireflies', handleTriggerFireflies);
   }, []);
 
   // Activity tracking & Lifelike wake-up / welcome back handling (Mobile & Desktop)
