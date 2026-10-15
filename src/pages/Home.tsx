@@ -80,6 +80,14 @@ export default function Home() {
 
   const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
 
+  // Gracefully summon fireflies shortly after page load to demonstrate the reflections across the 3D chrome sphere
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('trigger-fireflies'));
+    }, 2200);
+    return () => clearTimeout(timer);
+  }, []);
+
   // Active Project Architecture Modal
   const [activeArchProject, setActiveArchProject] = useState<ProjectItem | null>(null);
 
@@ -366,7 +374,14 @@ export default function Home() {
             <h1 className="display-title">
               Mohamed <br />
               <span className="hero-name-row">
-                <span className="chrome-text">Azil</span>
+                <span
+                  className="chrome-text"
+                  onClick={() => window.dispatchEvent(new CustomEvent('trigger-fireflies'))}
+                  style={{ cursor: 'pointer' }}
+                  title="Click to summon fireflies"
+                >
+                  Azil
+                </span>
                 <ChromeSphere3D />
               </span>
             </h1>

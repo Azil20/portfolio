@@ -212,13 +212,34 @@ function SphereScene({ containerRef, mousePosRef, isHovered, isClicked }: Sphere
         Math.min(delta * 12, 1)
       );
     }
+
+    // Dynamic material emissive response when fireflies pass
+    if (chromeMaterial) {
+      if (targetIntensity1 > 0.1) {
+        chromeMaterial.emissive.set('#84cc16');
+        chromeMaterial.emissiveIntensity = THREE.MathUtils.lerp(
+          chromeMaterial.emissiveIntensity,
+          targetWash * 0.12,
+          Math.min(delta * 12, 1)
+        );
+      } else {
+        chromeMaterial.emissiveIntensity = THREE.MathUtils.lerp(
+          chromeMaterial.emissiveIntensity,
+          0,
+          Math.min(delta * 8, 1)
+        );
+      }
+    }
   });
 
   return (
     <>
-      <ambientLight intensity={1.2} />
-      <directionalLight position={[6, 8, 8]} intensity={2.2} />
-      <directionalLight position={[-6, 4, -4]} intensity={0.9} color="#e2e8f0" />
+      <ambientLight intensity={1.0} />
+      {/* Primary key light matching Chatbot 3D model */}
+      <directionalLight position={[10, 10, 10]} intensity={2.0} />
+      {/* Secondary rim lights for crisp chrome contour definition */}
+      <directionalLight position={[-10, 8, -6]} intensity={0.9} color="#e2e8f0" />
+      <directionalLight position={[0, -6, 4]} intensity={0.5} color="#cbd5e1" />
 
       {/* Dynamic Cursor Light following mouse across the chrome surface */}
       <pointLight
@@ -235,7 +256,7 @@ function SphereScene({ containerRef, mousePosRef, isHovered, isClicked }: Sphere
         ref={fireflyLight1Ref}
         color="#a3e635"
         intensity={0}
-        distance={4.8}
+        distance={5.0}
         decay={1.6}
         position={[-1.8, 0, 1.15]}
       />
@@ -245,7 +266,7 @@ function SphereScene({ containerRef, mousePosRef, isHovered, isClicked }: Sphere
         ref={fireflyLight2Ref}
         color="#facc15"
         intensity={0}
-        distance={4.4}
+        distance={4.6}
         decay={1.6}
         position={[-1.2, 0.4, 1.25]}
       />
