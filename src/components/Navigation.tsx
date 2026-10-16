@@ -3,8 +3,19 @@ import { Moon, Sun, Menu, X, Languages } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import OptionWheel from './OptionWheel';
 
+const getInitialTheme = () => {
+  try {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'dark' || saved === 'light') return saved;
+  } catch {}
+  if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    return 'dark';
+  }
+  return 'light';
+};
+
 export default function Navigation() {
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState(getInitialTheme);
   const [activeSection, setActiveSection] = useState('experiences');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [headerVisible, setHeaderVisible] = useState(true);
@@ -22,8 +33,29 @@ export default function Navigation() {
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
+    const nextTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(nextTheme);
+    try {
+      localStorage.setItem('theme', nextTheme);
+    } catch {}
   };
+
+  // Automatically sync with device system theme if user has not manually overridden
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleDeviceThemeChange = (e: MediaQueryListEvent) => {
+      try {
+        if (!localStorage.getItem('theme')) {
+          setTheme(e.matches ? 'dark' : 'light');
+        }
+      } catch {
+        setTheme(e.matches ? 'dark' : 'light');
+      }
+    };
+    mediaQuery.addEventListener('change', handleDeviceThemeChange);
+    return () => mediaQuery.removeEventListener('change', handleDeviceThemeChange);
+  }, []);
 
   useEffect(() => {
     const sections = ['experiences', 'projects', 'skills', 'faq', 'reach-out'];
