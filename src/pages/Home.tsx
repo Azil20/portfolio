@@ -352,9 +352,9 @@ export default function Home() {
         <section className="hero-section" id="hero">
           <motion.div 
             style={{ y: isMobile ? 0 : y }}
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 1, y: 0 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="container"
           >
             <div className="hero-status-pill">
@@ -437,7 +437,7 @@ export default function Home() {
               transition={{ repeat: Infinity, duration: 2 }}
               aria-label="Scroll down to Journey"
             >
-              <ArrowDown size={28} className="text-muted scroll-down-arrow" />
+              <ArrowDown size={28} className="text-muted scroll-down-arrow" aria-hidden="true" />
             </motion.a>
           </div>
         </section>
@@ -553,7 +553,6 @@ export default function Home() {
                   viewport={{ once: true, margin: "-40px" }}
                   transition={{ duration: 0.52, delay: idx * 0.1, ease: [0.16, 1, 0.3, 1] }}
                   onClick={() => setActiveArchProject(proj)}
-                  role="button"
                   tabIndex={0}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
@@ -675,12 +674,14 @@ export default function Home() {
                       type="button"
                       className="faq-question-btn" 
                       aria-expanded={isOpen}
+                      aria-controls={`faq-answer-${idx}`}
                       onClick={() => setOpenFaq(isOpen ? null : idx)}
                     >
                       <span className="faq-question-text">{faq.question}</span>
                       <ChevronDown 
                         size={20} 
                         className={`faq-chevron ${isOpen ? 'rotate' : ''}`} 
+                        aria-hidden="true"
                       />
                     </button>
                     
@@ -706,6 +707,7 @@ export default function Home() {
                             }
                           }}
                           className="faq-answer-wrap"
+                          id={`faq-answer-${idx}`}
                         >
                           <p className="faq-answer">
                             {faq.answer}

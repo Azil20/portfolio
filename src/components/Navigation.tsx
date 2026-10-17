@@ -206,7 +206,7 @@ export default function Navigation() {
         </button>
         {/* Language Option Switcher: EN / FR segmented pill */}
         <div className="lang-switcher-pill" role="group" aria-label="Language selection">
-          <Languages size={14} className="lang-icon" />
+          <Languages size={14} className="lang-icon" aria-hidden="true" />
           <button
             type="button"
             className={`lang-pill-btn ${currentLang === 'en' ? 'active' : ''}`}
@@ -216,7 +216,7 @@ export default function Navigation() {
           >
             EN
           </button>
-          <span className="lang-pill-divider">·</span>
+          <span className="lang-pill-divider" aria-hidden="true">·</span>
           <button
             type="button"
             className={`lang-pill-btn ${currentLang === 'fr' ? 'active' : ''}`}
@@ -242,7 +242,7 @@ export default function Navigation() {
           >
             EN
           </button>
-          <span className="lang-pill-divider">·</span>
+          <span className="lang-pill-divider" aria-hidden="true">·</span>
           <button
             type="button"
             className={`lang-pill-btn ${currentLang === 'fr' ? 'active' : ''}`}
@@ -262,44 +262,43 @@ export default function Navigation() {
       </div>
     </nav>
 
-    {/* Floating side navigation wheel (shown on scroll down) */}
-    <div 
-      className={`floating-wheel-nav ${showWheel ? 'visible' : ''}`}
-      aria-hidden={!showWheel}
-      onMouseEnter={() => {
-        isHoveringWheelRef.current = true;
-        setShowWheel(true);
-        if (scrollStopTimerRef.current) clearTimeout(scrollStopTimerRef.current);
-      }}
-      onMouseLeave={() => {
-        isHoveringWheelRef.current = false;
-        scrollStopTimerRef.current = setTimeout(() => {
-          setShowWheel(false);
-        }, 1300);
-      }}
-    >
-      <OptionWheel
-        items={navItems.map(item => item.label)}
-        selected={selectedWheelIndex}
-        disabled={!showWheel}
-        tabIndex={showWheel ? 0 : -1}
-        side="right"
-        fontSize={1.05}
-        spacing={1.4}
-        curve={0.5}
-        tilt={4}
-        blur={0}
-        fade={0.18}
-        minOpacity={0.35}
-        smoothing={180}
-        inset={24}
-        loop={false}
-        draggable={true}
-        textColor={theme === 'dark' ? 'rgba(255, 255, 255, 0.45)' : 'rgba(15, 23, 42, 0.45)'}
-        activeColor={theme === 'dark' ? '#ffffff' : '#0a0a0a'}
-        onChange={(index) => handleWheelChange(index)}
-      />
-    </div>
+    {/* Floating side navigation wheel (shown only when user scrolls down) */}
+    {showWheel && (
+      <div 
+        className="floating-wheel-nav visible"
+        onMouseEnter={() => {
+          isHoveringWheelRef.current = true;
+          setShowWheel(true);
+          if (scrollStopTimerRef.current) clearTimeout(scrollStopTimerRef.current);
+        }}
+        onMouseLeave={() => {
+          isHoveringWheelRef.current = false;
+          scrollStopTimerRef.current = setTimeout(() => {
+            setShowWheel(false);
+          }, 1300);
+        }}
+      >
+        <OptionWheel
+          items={navItems.map(item => item.label)}
+          selected={selectedWheelIndex}
+          side="right"
+          fontSize={1.05}
+          spacing={1.4}
+          curve={0.5}
+          tilt={4}
+          blur={0}
+          fade={0.18}
+          minOpacity={0.55}
+          smoothing={180}
+          inset={24}
+          loop={false}
+          draggable={true}
+          textColor={theme === 'dark' ? 'rgba(255, 255, 255, 0.75)' : 'rgba(15, 23, 42, 0.75)'}
+          activeColor={theme === 'dark' ? '#ffffff' : '#0a0a0a'}
+          onChange={(index) => handleWheelChange(index)}
+        />
+      </div>
+    )}
   </>
 );
 }

@@ -31,7 +31,7 @@ export default function Footer() {
           {/* Col 1: Bio & Status */}
           <div className="footer-col footer-col-brand">
             <div className="footer-brand-title">
-              MOHAMED AZIL <span className="footer-brand-divider">//</span> AI &amp; BIG DATA
+              MOHAMED AZIL <span className="footer-brand-divider" aria-hidden="true">//</span> AI &amp; BIG DATA
             </div>
             <p className="footer-bio-text">
               {isFrench
@@ -195,9 +195,9 @@ export default function Footer() {
             © {new Date().getFullYear()} Mohamed Azil. All rights reserved.
           </div>
           <div className="footer-coordinates">
-            <span className="coord-dot"></span>
+            <span className="coord-dot" aria-hidden="true"></span>
             <span>All systems operational</span>
-            <span className="coord-sep">·</span>
+            <span className="coord-sep" aria-hidden="true">·</span>
             <span className="coord-geo">34.26° N, 6.58° W</span>
           </div>
           <div className="footer-tech-stack">
