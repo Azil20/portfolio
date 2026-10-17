@@ -5,12 +5,20 @@
   pointer-events: none;
 }
 
+.target-cursor,
+.target-cursor * {
+  pointer-events: none !important;
+}
+
 .target-cursor__corner {
   position: absolute;
   top: 0;
   left: 0;
+  width: var(--target-cursor-size, 12px);
+  height: var(--target-cursor-size, 12px);
   box-sizing: border-box;
   border-style: solid;
+  border-width: var(--target-cursor-thickness, 3px) 0 0 var(--target-cursor-thickness, 3px);
   border-color: var(--target-cursor-color, #ffffff);
   transform-origin: 0 0;
   will-change: transform;
@@ -20,6 +28,8 @@
   position: absolute;
   top: 0;
   left: 0;
+  width: var(--target-cursor-dot-size, 4px);
+  height: var(--target-cursor-dot-size, 4px);
   border-radius: 50%;
   background: var(--target-cursor-color, #ffffff);
   will-change: transform;
@@ -37,4 +47,10 @@
   opacity: 0;
   will-change: transform, opacity;
   pointer-events: none;
+}
+
+/* Hide native cursor cleanly on desktop fine-pointer devices when target-cursor is active */
+html.has-target-cursor,
+html.has-target-cursor * {
+  cursor: none !important;
 }
