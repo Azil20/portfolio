@@ -372,10 +372,10 @@ export default function Home() {
             </p>
 
             <div className="hero-cta-group">
-              <a href="#projects" className="btn">
+              <a href="#projects" className="btn cursor-target" data-cursor-label="Explore">
                 {t('hero.explore')}
               </a>
-              <a href="#reach-out" className="btn btn-outline">
+              <a href="#reach-out" className="btn btn-outline cursor-target" data-cursor-label="Contact">
                 {t('hero.contact')} <ArrowUpRight size={18} style={{ marginLeft: '6px' }} />
               </a>
 
@@ -383,7 +383,8 @@ export default function Home() {
               <div className="hero-cv-dropdown-wrapper">
                 <button 
                   type="button" 
-                  className="btn btn-outline hero-cv-btn"
+                  className="btn btn-outline hero-cv-btn cursor-target"
+                  data-cursor-label="Resume"
                   onClick={() => setCvDropdownOpen(!cvDropdownOpen)}
                   aria-expanded={cvDropdownOpen}
                 >

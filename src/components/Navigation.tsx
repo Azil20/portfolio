@@ -191,7 +191,7 @@ export default function Navigation() {
             {item.label}
           </a>
         ))}
-        <button onClick={toggleTheme} className="theme-toggle" aria-label="Toggle Theme">
+        <button onClick={toggleTheme} className="theme-toggle cursor-target" data-cursor-label="Theme" aria-label="Toggle Theme">
           {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
         </button>
         {/* Language Option Switcher: EN / FR segmented pill */}
@@ -220,7 +220,7 @@ export default function Navigation() {
       </div>
 
       <div className="mobile-nav-controls">
-        <button onClick={toggleTheme} className="theme-toggle" aria-label="Toggle Theme" title={theme === 'dark' ? "Switch to Light Mode" : "Switch to Dark Mode"}>
+        <button onClick={toggleTheme} className="theme-toggle cursor-target" data-cursor-label="Theme" aria-label="Toggle Theme" title={theme === 'dark' ? "Switch to Light Mode" : "Switch to Dark Mode"}>
           {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
         </button>
         <div className="lang-switcher-pill" role="group" aria-label="Language selection">
