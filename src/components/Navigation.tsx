@@ -110,10 +110,20 @@ export default function Navigation() {
       lastScrollY.current = currentScrollY;
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    let scrollRafId = 0;
+    const onScroll = () => {
+      if (scrollRafId) return;
+      scrollRafId = requestAnimationFrame(() => {
+        scrollRafId = 0;
+        handleScroll();
+      });
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
     handleScroll();
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', onScroll);
+      if (scrollRafId) cancelAnimationFrame(scrollRafId);
       if (scrollStopTimerRef.current) clearTimeout(scrollStopTimerRef.current);
     };
   }, [mobileMenuOpen]);
@@ -271,6 +281,8 @@ export default function Navigation() {
       <OptionWheel
         items={navItems.map(item => item.label)}
         selected={selectedWheelIndex}
+        disabled={!showWheel}
+        tabIndex={showWheel ? 0 : -1}
         side="right"
         fontSize={1.05}
         spacing={1.4}

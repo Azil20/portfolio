@@ -5,6 +5,8 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [react()],
   build: {
+    target: 'es2020',
+    cssMinify: true,
     rollupOptions: {
       output: {
         manualChunks(id) {
@@ -18,7 +20,7 @@ export default defineConfig({
             if (id.includes('lucide-react')) {
               return 'vendor-icons';
             }
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom') || id.includes('i18next')) {
               return 'vendor-react';
             }
           }

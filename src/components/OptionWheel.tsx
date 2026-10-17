@@ -27,6 +27,8 @@ export interface OptionWheelProps {
   soundUrl?: string;
   soundVolume?: number;
   className?: string;
+  tabIndex?: number;
+  disabled?: boolean;
 }
 
 interface WheelConfig {
@@ -82,7 +84,9 @@ const OptionWheel = ({
   draggable = true,
   soundUrl = '',
   soundVolume = 0.5,
-  className = ''
+  className = '',
+  tabIndex = 0,
+  disabled = false
 }: OptionWheelProps) => {
   const initialSelected = selected !== undefined ? selected : defaultSelected;
   const rootRef = useRef<HTMLDivElement>(null);
@@ -341,8 +345,9 @@ const OptionWheel = ({
     <div
       ref={rootRef}
       role="listbox"
-      tabIndex={0}
+      tabIndex={disabled ? -1 : tabIndex}
       aria-label="Option wheel"
+      aria-hidden={disabled || tabIndex === -1 ? true : undefined}
       className={`option-wheel${side === 'right' ? ' option-wheel--right' : ''}${isDragging ? ' option-wheel--dragging' : ''}${className ? ` ${className}` : ''}`}
       style={
         {

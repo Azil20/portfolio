@@ -1350,7 +1350,7 @@ export default function Chatbot() {
       <div
         className={`chat-backdrop-blur ${isOpen ? 'active' : ''}`}
         onClick={() => setIsOpen(false)}
-        aria-label="Close Chat"
+        aria-hidden="true"
       />
 
       {/* 5 Fireflies flying from all over the left (upper to lower left) across the screen */}

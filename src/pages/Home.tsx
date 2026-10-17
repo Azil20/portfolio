@@ -751,9 +751,9 @@ export default function Home() {
                     <span className="status-indicator-dot pulse"></span>
                     <span className="status-label">{t('contact.availability')}</span>
                   </div>
-                  <h4 style={{ fontSize: '1.25rem', marginTop: '0.5rem', marginBottom: '0.5rem' }}>
+                  <h3 style={{ fontSize: '1.25rem', marginTop: '0.5rem', marginBottom: '0.5rem' }}>
                     {t('contact.statusTitle')}
-                  </h4>
+                  </h3>
                   <p className="text-muted" style={{ fontSize: '0.9rem' }}>
                     {t('contact.statusDesc')}
                   </p>
@@ -1036,7 +1036,7 @@ export default function Home() {
                     <div key={sIdx} className="arch-pipeline-step">
                       <div className="arch-step-number">0{sIdx + 1}</div>
                       <div className="arch-step-content">
-                        <h4 className="arch-step-title">{step.title}</h4>
+                        <h3 className="arch-step-title">{step.title}</h3>
                         <p className="arch-step-desc">{step.desc}</p>
                       </div>
                     </div>

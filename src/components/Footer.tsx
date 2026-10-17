@@ -50,7 +50,7 @@ export default function Footer() {
 
           {/* Col 2: Engineered Systems */}
           <div className="footer-col">
-            <h4 className="footer-col-heading">ENGINEERED SYSTEMS</h4>
+            <h3 className="footer-col-heading">ENGINEERED SYSTEMS</h3>
             <ul className="footer-links-list">
               <li>
                 <a href="#projects" className="footer-nav-link">
@@ -77,7 +77,7 @@ export default function Footer() {
 
           {/* Col 3: Technical Stack */}
           <div className="footer-col">
-            <h4 className="footer-col-heading">TECHNICAL STACK</h4>
+            <h3 className="footer-col-heading">TECHNICAL STACK</h3>
             <ul className="footer-links-list">
               <li>Python, C++ &amp; Java 17/21</li>
               <li>PyTorch, DistilBERT &amp; Gemini API</li>
@@ -90,7 +90,7 @@ export default function Footer() {
 
           {/* Col 4: Credentials & CV Downloads */}
           <div className="footer-col">
-            <h4 className="footer-col-heading">CREDENTIALS &amp; CVS</h4>
+            <h3 className="footer-col-heading">CREDENTIALS &amp; CVS</h3>
             <div className="footer-cv-downloads">
               <a 
                 href="/CV_Mohamed_Azil_EN.pdf" 

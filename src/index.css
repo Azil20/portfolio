@@ -1,7 +1,7 @@
 :root {
   --bg-color: #ffffff;
   --text-color: #000000;
-  --text-muted: #666666;
+  --text-muted: #475569;
   --accent-color: #e5e5e5;
   --border-color: #f0f0f0;
   --chrome-gradient: linear-gradient(135deg, #111111 0%, #333333 25%, #111111 50%, #222222 75%, #050505 100%);
@@ -47,7 +47,7 @@
 [data-theme='dark'] {
   --bg-color: #050505;
   --text-color: #ffffff;
-  --text-muted: #888888;
+  --text-muted: #9ca3af;
   --accent-color: #1a1a1a;
   --border-color: #222222;
   --chrome-gradient: linear-gradient(135deg, #475569 0%, #94a3b8 32%, #ffffff 52%, #f8fafc 58%, #64748b 80%, #334155 100%);
@@ -1437,7 +1437,8 @@ a {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border-color);
   font-size: 0.85rem;
-  color: var(--text-muted);
+  color: var(--text-color);
+  font-weight: 500;
   margin-bottom: 1.25rem;
   backdrop-filter: blur(8px);
 }
@@ -1670,7 +1671,7 @@ a {
 
 [data-theme='light'] .category-internship {
   background: #e0f2fe;
-  color: #0284c7;
+  color: #0369a1;
   border: 1px solid #bae6fd;
 }
 
@@ -1897,7 +1898,7 @@ a {
 
 [data-theme='light'] .project-flagship-badge {
   background: rgba(2, 132, 199, 0.1);
-  color: #0284c7;
+  color: #0369a1;
   border-color: rgba(2, 132, 199, 0.25);
 }
 
@@ -2417,7 +2418,7 @@ a {
 }
 
 [data-theme='light'] .form-fallback-mailto-btn {
-  color: #0284c7;
+  color: #0369a1;
   background: rgba(2, 132, 199, 0.08);
   border-color: rgba(2, 132, 199, 0.25);
 }
@@ -2490,7 +2491,7 @@ a {
 }
 
 [data-theme='light'] .project-card:hover .project-arch-cta {
-  color: #0284c7;
+  color: #0369a1;
 }
 
 /* Architecture Modal */
@@ -2694,7 +2695,7 @@ a {
 
 [data-theme='light'] .arch-step-number {
   background: rgba(2, 132, 199, 0.12);
-  color: #0284c7;
+  color: #0369a1;
 }
 
 .arch-step-content {
@@ -2742,7 +2743,7 @@ a {
 }
 
 [data-theme='light'] .arch-pillar-val {
-  color: #0284c7;
+  color: #0369a1;
 }
 
 .arch-pillar-label {
@@ -3480,7 +3481,7 @@ a {
 
 .footer-tech-stack {
   font-size: 0.78rem;
-  opacity: 0.75;
+  color: var(--text-muted);
 }
 
 /* Hero CV Dropdown */
