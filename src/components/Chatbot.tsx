@@ -145,6 +145,8 @@ function Face({
   const [blink, setBlink] = useState(false);
   const fetchStartTimeRef = useRef(0);
   const closingStartTimeRef = useRef(0);
+  const wakeInitialPitchRef = useRef(0.45);
+  const wasWakingRef = useRef(false);
 
   useEffect(() => {
     if (sleepStage === 'fetching_book') {
@@ -266,6 +268,10 @@ function Face({
       let targetPitch = isMobile ? energeticPitch : (mousePosRef.current.y !== 0 ? mousePosRef.current.y : energeticPitch * 0.7);
       let targetZ = isMobile ? energeticRoll : (mousePosRef.current.x !== 0 ? Math.sin(t * 1) * 0.04 : energeticRoll);
 
+      if (!isWaking) {
+        wasWakingRef.current = false;
+      }
+
       if (isThinking) {
         // Pensive thinking pose: naturally tilted upwards, curious ponderous gaze into thought
         targetYaw = -0.22 + Math.sin(t * 1.4) * 0.08;
@@ -319,10 +325,14 @@ function Face({
         targetPitch = mousePosRef.current.y;
         targetZ = 0;
       } else if (isWaking) {
+        if (!wasWakingRef.current) {
+          wasWakingRef.current = true;
+          wakeInitialPitchRef.current = groupRef.current ? groupRef.current.rotation.x : 0.45;
+        }
         const wakeElapsed = Math.min(1, (performance.now() - wakeStartTimeRef.current) / 1150);
         const decay = Math.max(0, 1 - wakeElapsed);
         const headWaveYaw = Math.sin(wakeElapsed * Math.PI * 6.5) * 0.48 * decay;
-        const headWavePitch = THREE.MathUtils.lerp(0.45, mousePosRef.current.y, Math.pow(wakeElapsed, 0.55));
+        const headWavePitch = THREE.MathUtils.lerp(wakeInitialPitchRef.current, mousePosRef.current.y, Math.pow(wakeElapsed, 0.55));
         const headWaveZ = Math.sin(wakeElapsed * Math.PI * 5) * 0.16 * decay;
 
         targetYaw = headWaveYaw + (1 - decay) * mousePosRef.current.x;
@@ -687,7 +697,11 @@ function CanvasFireflyReflection({ active, progress }: { active: boolean; progre
   const lightRef = useRef<THREE.PointLight>(null);
 
   useFrame((state) => {
-    if (!lightRef.current || !active) return;
+    if (!lightRef.current) return;
+    if (!active) {
+      lightRef.current.intensity = 0;
+      return;
+    }
     // Activate reflection light as fireflies reach chatbot (progress 0.65 to 0.98)
     if (progress >= 0.65 && progress <= 0.98) {
       const subP = (progress - 0.65) / 0.33;
@@ -796,16 +810,37 @@ function CursorModelLight({ active }: { active: boolean }) {
 // 5 Fireflies flying from all over the left (Upper Left, Mid Left, Lower Left) across the screen
 function ScreenFireflies({
   active,
+  scared = false,
+  cursorPos,
   onProgress,
   onComplete
 }: {
   active: boolean;
+  scared?: boolean;
+  cursorPos?: { x: number; y: number };
   onProgress: (p: number, screenX: number, screenY: number) => void;
   onComplete: () => void;
 }) {
-  const [coords, setCoords] = useState<{ x: number; y: number }[]>([]);
+  const [coords, setCoords] = useState<{ x: number; y: number; opacity?: number; scale?: number }[]>([]);
   const reqIdRef = useRef<number | null>(null);
   const startTimeRef = useRef<number | null>(null);
+  const lastCoordsRef = useRef<{ x: number; y: number }[]>([]);
+
+  // Flee / Scared state tracking refs
+  const scaredRef = useRef(scared);
+  const cursorPosRef = useRef(cursorPos);
+  const isFleeingRef = useRef(false);
+  const fleeStartTimeRef = useRef<number | null>(null);
+  const fleeStartCoordsRef = useRef<{ x: number; y: number }[]>([]);
+  const fleeVectorsRef = useRef<{ vx: number; vy: number; speed: number }[]>([]);
+
+  useEffect(() => {
+    scaredRef.current = scared;
+  }, [scared]);
+
+  useEffect(() => {
+    cursorPosRef.current = cursorPos;
+  }, [cursorPos]);
 
   // 5 Fireflies emerging from all over the left (upper-left to lower-left) like real fireflies
   const configs = useMemo(() => [
@@ -826,6 +861,8 @@ function ScreenFireflies({
       if (reqIdRef.current) cancelAnimationFrame(reqIdRef.current);
       setCoords([]);
       startTimeRef.current = null;
+      isFleeingRef.current = false;
+      fleeStartTimeRef.current = null;
       window.dispatchEvent(new CustomEvent('firefly-swarm-flight', {
         detail: {
           active: false,
@@ -841,6 +878,89 @@ function ScreenFireflies({
     const DURATION = 7600; // 7.6s natural flight from all over left to right
 
     const animate = (timestamp: number) => {
+      // 1. Scared / Flee Sequence: fireflies scatter frantically away from cursor!
+      if (scaredRef.current) {
+        if (!isFleeingRef.current) {
+          isFleeingRef.current = true;
+          fleeStartTimeRef.current = timestamp;
+          fleeStartCoordsRef.current = lastCoordsRef.current.length === 5
+            ? lastCoordsRef.current.map(c => ({ ...c }))
+            : configs.map(c => ({ x: window.innerWidth * 0.35, y: window.innerHeight * c.startYFactor }));
+
+          const mouseX = cursorPosRef.current?.x ?? (window.innerWidth / 2);
+          const mouseY = cursorPosRef.current?.y ?? (window.innerHeight / 2);
+
+          fleeVectorsRef.current = configs.map((_c, idx) => {
+            const start = fleeStartCoordsRef.current[idx] || { x: 0, y: 0 };
+            let dx = start.x - mouseX;
+            let dy = start.y - mouseY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            let baseAngle: number;
+            if (dist < 20) {
+              baseAngle = (idx / 5) * Math.PI * 2 - Math.PI / 2;
+            } else {
+              baseAngle = Math.atan2(dy, dx);
+            }
+
+            // Scatter spread angle: fans out the 5 fireflies into a dramatic arc
+            const spread = (idx - 2) * 0.38 + Math.sin(idx * 2.3) * 0.16;
+            const finalAngle = baseAngle + spread;
+
+            // Startled insect flight: strong upward scare burst into the air
+            let vx = Math.cos(finalAngle);
+            let vy = Math.sin(finalAngle) - 0.42;
+            const len = Math.sqrt(vx * vx + vy * vy);
+            vx /= len;
+            vy /= len;
+
+            // Dart velocity: 1150 - 1650 px/s
+            const speed = 1150 + idx * 140 + ((idx % 2) * 160);
+            return { vx, vy, speed };
+          });
+        }
+
+        const fleeElapsed = timestamp - (fleeStartTimeRef.current ?? timestamp);
+        const FLEE_DURATION = 650;
+        const fleeP = Math.min(1, fleeElapsed / FLEE_DURATION);
+
+        const travelDistFactor = Math.pow(fleeP, 1.25) * (FLEE_DURATION / 1000);
+        const panicDecay = Math.max(0, 1 - fleeP);
+
+        const newCoords = configs.map((c, idx) => {
+          const start = fleeStartCoordsRef.current[idx] || { x: 0, y: 0 };
+          const vec = fleeVectorsRef.current[idx] || { vx: 0, vy: -1, speed: 1200 };
+          const panicJitter = Math.sin(fleeElapsed * 0.08 + idx * 2.8) * 14 * panicDecay;
+
+          return {
+            x: start.x + vec.vx * vec.speed * travelDistFactor + panicJitter,
+            y: start.y + vec.vy * vec.speed * travelDistFactor + panicJitter,
+            opacity: Math.max(0, 1 - Math.pow(fleeP, 1.35)),
+            scale: c.scale * (1 + Math.sin(fleeP * Math.PI) * 0.25 - fleeP * 0.3)
+          };
+        });
+
+        setCoords(newCoords);
+
+        if (fleeP < 1) {
+          reqIdRef.current = requestAnimationFrame(animate);
+        } else {
+          setCoords([]);
+          window.dispatchEvent(new CustomEvent('firefly-swarm-flight', {
+            detail: {
+              active: false,
+              p: 1,
+              centroidX: -999,
+              centroidY: -999,
+              fireflies: []
+            }
+          }));
+          onComplete();
+        }
+        return;
+      }
+
+      // 2. Normal peaceful firefly flight
       if (!startTimeRef.current) startTimeRef.current = timestamp;
       const elapsed = timestamp - startTimeRef.current;
       const p = Math.min(1, elapsed / DURATION);
@@ -881,6 +1001,7 @@ function ScreenFireflies({
         };
       });
 
+      lastCoordsRef.current = newCoords.map(c => ({ x: c.x, y: c.y }));
       setCoords(newCoords);
 
       // Broadcast swarm coordinates to window so 3D chrome sphere reflects fireflies in real-time
@@ -920,7 +1041,7 @@ function ScreenFireflies({
   if (!active || coords.length === 0) return null;
 
   return (
-    <div className="firefly-screen-overlay" aria-hidden="true">
+    <div className={`firefly-screen-overlay ${scared ? 'scared' : ''}`} aria-hidden="true">
       {coords.map((pos, idx) => (
         <div
           key={idx}
@@ -928,7 +1049,8 @@ function ScreenFireflies({
           style={{
             left: `${pos.x}px`,
             top: `${pos.y}px`,
-            transform: `translate(-50%, -50%) scale(${configs[idx].scale})`
+            opacity: pos.opacity !== undefined ? pos.opacity : 1,
+            transform: `translate(-50%, -50%) scale(${pos.scale ?? configs[idx].scale})`
           }}
         >
           <div className="firefly-aura" />
@@ -986,6 +1108,10 @@ export default function Chatbot() {
   const wakeStartTimeRef = useRef(0);
   const sleepStageRef = useRef<SleepStage>('awake');
   const [fireflyProgress, setFireflyProgress] = useState(0);
+  const [isFirefliesScared, setIsFirefliesScared] = useState(false);
+  const isFirefliesScaredRef = useRef(false);
+  const [scaredCursorPos, setScaredCursorPos] = useState<{ x: number; y: number } | undefined>();
+  const cursorScreenPosRef = useRef<{ x: number; y: number }>({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
 
 
 
@@ -1038,6 +1164,8 @@ export default function Chatbot() {
     if (bookTimeoutRef.current) clearTimeout(bookTimeoutRef.current);
     fireflyProgressRef.current = 0;
     setFireflyProgress(0);
+    isFirefliesScaredRef.current = false;
+    setIsFirefliesScared(false);
     setSleepStage('awake');
   };
 
@@ -1168,8 +1296,24 @@ export default function Chatbot() {
           setSleepStage('awake');
         }, 1150);
       } else if (sleepStageRef.current === 'fireflies') {
-        // Fireflies are actively soaring across the screen; don't cancel on subtle mouse movements
-        resetTimeout(8000);
+        if (isFirefliesScaredRef.current) return;
+        isFirefliesScaredRef.current = true;
+        setIsFirefliesScared(true);
+        setScaredCursorPos({ ...cursorScreenPosRef.current });
+
+        // Scared fireflies fly away, and 3D model shakes head as he used to do!
+        wakeStartTimeRef.current = performance.now();
+        setSleepStage('waking');
+        setShowAgentBubble(false);
+        if (wakeTimeoutRef.current) clearTimeout(wakeTimeoutRef.current);
+        wakeTimeoutRef.current = setTimeout(() => {
+          setSleepStage('awake');
+          isFirefliesScaredRef.current = false;
+          setIsFirefliesScared(false);
+          resetTimeout();
+        }, 1150);
+        return;
+      } else if (sleepStageRef.current === 'waking') {
         return;
       } else if (sleepStageRef.current === 'awake') {
         wakeUp();
@@ -1179,6 +1323,8 @@ export default function Chatbot() {
     };
 
     const handleMouseMove = (e: MouseEvent) => {
+      cursorScreenPosRef.current = { x: e.clientX, y: e.clientY };
+
       // Only track cursor on desktop devices with mouse
       if (!isMobileRef.current) {
         const wrapper = document.querySelector('.chatbot-canvas-wrapper');
@@ -1215,6 +1361,13 @@ export default function Chatbot() {
       handleUserActivity();
     };
 
+    const handleTouchActivity = (e: TouchEvent) => {
+      if (e.touches && e.touches[0]) {
+        cursorScreenPosRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      }
+      handleUserActivity();
+    };
+
     const handleMouseLeave = () => {
       if (isOpenRef.current) {
         wakeUp();
@@ -1233,8 +1386,8 @@ export default function Chatbot() {
 
     // Mobile touch & scroll events: Keep the AI model awake as user uses the website on phone!
     window.addEventListener('scroll', handleUserActivity, { passive: true });
-    window.addEventListener('touchstart', handleUserActivity, { passive: true });
-    window.addEventListener('touchmove', handleUserActivity, { passive: true });
+    window.addEventListener('touchstart', handleTouchActivity, { passive: true });
+    window.addEventListener('touchmove', handleTouchActivity, { passive: true });
 
     resetTimeout();
 
@@ -1245,8 +1398,8 @@ export default function Chatbot() {
       window.removeEventListener('blur', handleMouseLeave);
       window.removeEventListener('focus', handleUserActivity);
       window.removeEventListener('scroll', handleUserActivity);
-      window.removeEventListener('touchstart', handleUserActivity);
-      window.removeEventListener('touchmove', handleUserActivity);
+      window.removeEventListener('touchstart', handleTouchActivity);
+      window.removeEventListener('touchmove', handleTouchActivity);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       if (wakeTimeoutRef.current) clearTimeout(wakeTimeoutRef.current);
       if (bookTimeoutRef.current) clearTimeout(bookTimeoutRef.current);
@@ -1273,6 +1426,11 @@ export default function Chatbot() {
   };
 
   const handleFireflyComplete = () => {
+    if (isFirefliesScaredRef.current) {
+      isFirefliesScaredRef.current = false;
+      setIsFirefliesScared(false);
+      return;
+    }
     if (!isOpenRef.current) {
       setSleepStage('sleeping');
     }
@@ -1355,7 +1513,9 @@ export default function Chatbot() {
 
       {/* 5 Fireflies flying from all over the left (upper to lower left) across the screen */}
       <ScreenFireflies
-        active={sleepStage === 'fireflies'}
+        active={sleepStage === 'fireflies' || isFirefliesScared}
+        scared={isFirefliesScared}
+        cursorPos={scaredCursorPos}
         onProgress={handleFireflyProgress}
         onComplete={handleFireflyComplete}
       />
@@ -1535,7 +1695,7 @@ export default function Chatbot() {
             <CursorModelLight active={isHoveringCanvas} />
             {/* Real-time green-gold firefly reflection light on chrome head */}
             <CanvasFireflyReflection
-              active={sleepStage === 'fireflies'}
+              active={sleepStage === 'fireflies' && !isFirefliesScared}
               progress={fireflyProgress}
             />
             {/* Cybernetic neural thinking light effect while AI is processing response */}
