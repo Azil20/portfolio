@@ -42,7 +42,7 @@ Key Information about Mohamed Azil:
   - Big Data: Gestion distribuée des données & calcul parallèle (Hadoop, Spark), Technologies de stockage Big Data, Algorithmique avancée & Optimisation, Recherche Opérationnelle.
   - Génie Logiciel & Web: Flask, FastAPI, React 18, API REST, Programmation Système (Linux), Tailwind CSS.
   - Bases de Données: Bases de données avancées, PostgreSQL, MySQL, SQLite, Supabase.
-  - Systèmes / Outils: Linux, Windows Server, Git, GitHub, Docker.
+  - Systèmes / Outils: Linux, Windows Server, Git, GitHub.
   - Soft Skills: Résolution de problèmes, esprit analytique, travail d’équipe, adaptabilité, rigueur.
   - Certifications:
     1. Oracle AI Database Foundations Associate (1Z0-1195-26)

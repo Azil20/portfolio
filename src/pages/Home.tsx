@@ -316,7 +316,7 @@ export default function Home() {
     },
     {
       title: t('skills.groups.tools_and_languages'),
-      skills: ['Linux', 'Git', 'Docker', t('skills.groups.tools_problem'), t('skills.groups.tools_team'), t('skills.groups.lang_ar'), t('skills.groups.lang_fr'), t('skills.groups.lang_en')]
+      skills: ['Linux', 'Git', t('skills.groups.tools_problem'), t('skills.groups.tools_team'), t('skills.groups.lang_ar'), t('skills.groups.lang_fr'), t('skills.groups.lang_en')]
     }
   ];
 
