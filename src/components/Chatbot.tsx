@@ -1564,8 +1564,8 @@ export default function Chatbot() {
                   <button
                     type="button"
                     className="chat-inquiry-card"
-                    onClick={() => sendUserText(i18n.language?.startsWith('fr') 
-                      ? "Présente-moi Mohamed Azil, son profil, son parcours et ses compétences clés." 
+                    onClick={() => sendUserText(i18n.language?.startsWith('fr')
+                      ? "Présente-moi Mohamed Azil, son profil, son parcours et ses compétences clés."
                       : "Who is Mohamed? Tell me about his architecture background, Master degree, and key capabilities."
                     )}
                   >
@@ -1573,8 +1573,8 @@ export default function Chatbot() {
                       {i18n.language?.startsWith('fr') ? "Qui est Mohamed ?" : "Who is Med?"}
                     </span>
                     <span className="inquiry-card-desc">
-                      {i18n.language?.startsWith('fr') 
-                        ? "Parcours ingénieur, Master IA & Big Data, capacités" 
+                      {i18n.language?.startsWith('fr')
+                        ? "Parcours ingénieur, Master IA & Big Data, capacités"
                         : "Architecture, background, and capabilities"}
                     </span>
                   </button>

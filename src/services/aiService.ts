@@ -19,8 +19,10 @@ Your name is Med.
 Key Information about Mohamed Azil:
 - Profile: Étudiant en dernière année de Master (M2) Big Data, Intelligence Artificielle et Applications Avancées à l’Université Ibn Tofaïl (Kénitra). Spécialisé en Machine Learning, NLP, architectures de données et calcul distribué.
 - Objectif: Recherche active d'un Stage de Fin d'Études (PFE) à partir de début février 2027 en tant qu'ingénieur IA, Machine Learning Engineer ou Big Data Engineer.
+- Date de Naissance (Date of Birth): 10 Juin 2004 (10/06/2004) [June 10, 2004] au Maroc.
+- Âge (Age): Né le 10 juin 2004. Calculez ou indiquez son âge exact selon la date courante (20 ans en 2024, 21 ans en 2025, 22 ans en 2026).
 - Contact:
-  - Email: azilmohamed051@gmail.com
+  - Email: ailmohamed@outlook.com
   - Téléphone: +212 689 448 142
   - LinkedIn: https://www.linkedin.com/in/mohamed-azil-3b303b365/
   - GitHub: https://github.com/Azil20
@@ -54,7 +56,8 @@ Tone & Personality:
 - CRITICAL LANGUAGE RULE: Always AUTO-DETECT the user's language (English, French, or Arabic) and reply EXACTLY in that language. Do not mix languages.
 - CONCISENESS RULE: Keep responses extremely short, concise, and highly useful (maximum 1 to 2 sentences). Give the user exactly what they need to know without filler.
 - Friendly, polished, highly professional, and accurate.
-- If asked about hiring, contact, or collaboration, invite them to connect with Mohamed directly (email: azilmohamed051@gmail.com, tel: +212 689 448 142).
+- If asked about Mohamed's date of birth, age, or birthday ("When was Mohamed born?", "What is his age?", "Quel est son âge ?", "Date de naissance ?"): State accurately in the user's language that Mohamed Azil was born on June 10, 2004 (10/06/2004) in Morocco and specify his age.
+- If asked about hiring, contact, or collaboration, invite them to connect with Mohamed directly (email: ailmohamed@outlook.com, tel: +212 689 448 142).
 - CRITICAL BOUNDARY: If a user asks about anything unrelated to Mohamed Azil (e.g., general programming, math, history, football, etc.), warmly and politely decline. Tell them clearly that you are exclusively here to discuss Mohamed's portfolio, projects, skills, education, and professional experience.`;
 
 // Default configurations per provider
@@ -140,19 +143,54 @@ function generateKnowledgeFallback(userQuery: string): string {
   }
 
   if (query.includes('pfe') || query.includes('recrut') || query.includes('disponib') || query.includes('hire') || query.includes('contact') || query.includes('email') || query.includes('phone') || query.includes('tel')) {
-    return "Mohamed Azil recherche activement un **Stage de Fin d'Études (PFE)** débutant en **février 2027** en tant qu'ingénieur IA, Machine Learning Engineer ou Big Data Engineer.\n\nVous pouvez le contacter directement :\n• Email : azilmohamed051@gmail.com\n• Téléphone / WhatsApp : +212 689 448 142\n• LinkedIn : https://www.linkedin.com/in/mohamed-azil-3b303b365/\n• GitHub : https://github.com/Azil20";
+    return "Mohamed Azil recherche activement un **Stage de Fin d'Études (PFE)** débutant en **février 2027** en tant qu'ingénieur IA, Machine Learning Engineer ou Big Data Engineer.\n\nVous pouvez le contacter directement :\n• Email : ailmohamed@outlook.com\n• Téléphone / WhatsApp : +212 689 448 142\n• LinkedIn : https://www.linkedin.com/in/mohamed-azil-3b303b365/\n• GitHub : https://github.com/Azil20";
   }
 
   if (query.includes('skill') || query.includes('stack') || query.includes('tech') || query.includes('competence') || query.includes('python')) {
     return "Mohamed specializes in:\n\n• **IA & Machine Learning**: Deep Learning, NLP, Transformers, PyTorch, Scikit-Learn, SHAP, DistilBERT, Gemini API.\n• **Big Data**: Hadoop, Apache Spark, calcul distribué, NoSQL, SQL.\n• **Génie Logiciel**: Python, C++, Java, Flask, FastAPI, React 18, TypeScript, Tailwind CSS, Supabase.\n• **Systèmes & Réseaux**: Linux, Windows Server 2012, Active Directory, VPN.\n• **Langues**: Arabe (maternelle), Français (courant - B2 TCF), Anglais (opérationnel / technique).";
   }
 
+  if (
+    query.includes('born') ||
+    query.includes('birth') ||
+    query.includes('age') ||
+    query.includes('âge') ||
+    query.includes('naissance') ||
+    query.includes('né') ||
+    query.includes('anniversaire') ||
+    query.includes('birthday') ||
+    query.includes('10/06') ||
+    query.includes('10-06') ||
+    query.includes('2004') ||
+    query.includes('old are you') ||
+    query.includes('how old')
+  ) {
+    const today = new Date();
+    let age = today.getFullYear() - 2004;
+    const m = today.getMonth() - 5; // Month is 0-indexed (5 = June)
+    if (m < 0 || (m === 0 && today.getDate() < 10)) {
+      age--;
+    }
+    const isFrench = 
+      query.includes('naissance') || 
+      query.includes('âge') || 
+      query.includes('né') || 
+      query.includes('anniversaire') || 
+      query.includes('quand') ||
+      query.includes('quel');
+
+    if (isFrench) {
+      return `Mohamed Azil est né le 10 juin 2004 (10/06/2004) au Maroc. Il a actuellement ${age} ans.`;
+    }
+    return `Mohamed Azil was born on June 10, 2004 (10/06/2004) in Morocco. He is currently ${age} years old.`;
+  }
+
   if (query.includes('about') || query.includes('who') || query.includes('mohamed') || query.includes('azil')) {
-    return "Mohamed Azil est étudiant en dernière année de Master (M2) Big Data, Intelligence Artificielle et Applications Avancées à l’Université Ibn Tofaïl (Kénitra). Passionné par la conception de modèles de Machine Learning robustes et l'ingénierie de données distribuées, il recherche un stage PFE pour février 2027.";
+    return "Mohamed Azil (né le 10 juin 2004 / born June 10, 2004) est étudiant en dernière année de Master (M2) Big Data, Intelligence Artificielle et Applications Avancées à l’Université Ibn Tofaïl (Kénitra). Passionné par la conception de modèles de Machine Learning robustes et l'ingénierie de données distribuées, il recherche un stage PFE pour février 2027.";
   }
 
   if (query.includes('hello') || query.includes('hi') || query.includes('hey') || query.includes('salut') || query.includes('bonjour')) {
-    return "Hello! I am Med, Mohamed Azil's AI assistant. I can tell you about his M2 Big Data & AI studies, his projects like BMA and FraudGuard, or his search for a PFE internship in Feb 2027. What would you like to know?";
+    return "Hello! I am Med, Mohamed Azil's AI assistant. I can tell you about his M2 Big Data & AI studies, his background, his projects like BMA and FraudGuard, or his search for a PFE internship in Feb 2027. What would you like to know?";
   }
 
   return "I am Med, Mohamed Azil's AI assistant. He is currently an M2 Big Data & AI student seeking a PFE internship for February 2027. How can I help you regarding his portfolio?";

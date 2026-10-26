@@ -115,6 +115,10 @@ export default function Footer() {
             <ul className="footer-credentials-list">
               <li>
                 <span className="cred-dot"></span>
+                <span>{isFrench ? "Né le 10/06/2004 (10 Juin 2004)" : "Born June 10, 2004 (10/06/2004)"}</span>
+              </li>
+              <li>
+                <span className="cred-dot"></span>
                 <span>Master Big Data &amp; IA (M2 · FSK)</span>
               </li>
               <li>
@@ -161,12 +165,12 @@ export default function Footer() {
               <span>LinkedIn (/in/mohamed-azil)</span>
             </a>
             <a 
-              href="mailto:azilmohamed051@gmail.com" 
+              href="mailto:ailmohamed@outlook.com" 
               className="footer-social-link"
               title="Direct Email"
             >
               <Mail size={16} />
-              <span>azilmohamed051@gmail.com</span>
+              <span>ailmohamed@outlook.com</span>
             </a>
             <a 
               href="tel:+212689448142" 

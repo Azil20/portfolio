@@ -11,6 +11,9 @@
   "hero": {
     "status": "Seeking PFE Internship (Feb 2027) • Master 2 Big Data & AI",
     "description": "Final year Master's student (M2) in Big Data, Artificial Intelligence, and Advanced Applications at Ibn Tofail University (FSK Kenitra). Specializing in designing Machine Learning models, NLP, and distributed data architectures.",
+    "birthBadge": "Born June 10, 2004 (10/06/2004)",
+    "locationBadge": "Morocco (Kenitra / Beni Mellal)",
+    "educationBadge": "Master 2 Big Data & AI",
     "explore": "Explore Projects",
     "contact": "Contact Me"
   },
@@ -187,7 +190,7 @@
     "items": {
       "q1": {
         "question": "What is your primary profile and area of expertise?",
-        "answer": "Final year Master's student (M2) in Big Data, Artificial Intelligence, and Advanced Applications at Ibn Tofail University (Kenitra). I specialize in Machine Learning models, NLP (Transformers), distributed data architectures (Hadoop, Spark), and model explainability (SHAP)."
+        "answer": "Born on June 10, 2004 (10/06/2004), I am a final-year Master's student (M2) in Big Data, Artificial Intelligence, and Advanced Applications at Ibn Tofail University (Kenitra). I specialize in Machine Learning models, NLP (Transformers), distributed data architectures (Hadoop, Spark), and model explainability (SHAP)."
       },
       "q2": {
         "question": "Are you available for an End-of-Studies (PFE) Internship?",
@@ -203,7 +206,7 @@
       },
       "q5": {
         "question": "How can I contact you for an interview or opportunity?",
-        "answer": "You can reach me directly via email at azilmohamed051@gmail.com, by phone at +212 689 448 142, or through LinkedIn (linkedin.com/in/mohamed-azil-3b303b365)."
+        "answer": "You can reach me directly via email at ailmohamed@outlook.com, by phone at +212 689 448 142, or through LinkedIn (linkedin.com/in/mohamed-azil-3b303b365)."
       }
     }
   },
@@ -214,6 +217,8 @@
     "availability": "Immediate Availability",
     "statusTitle": "Seeking PFE Internship (Starting Feb 2027)",
     "statusDesc": "Available for an End-of-Studies (PFE) Internship or opportunities as an AI Engineer, Machine Learning Engineer, or Big Data Engineer.",
+    "birthLabel": "Date of Birth",
+    "birthDate": "June 10, 2004 (10/06/2004)",
     "emailLabel": "Personal Email",
     "copyEmail": "Copy email to clipboard",
     "copied": "Copied!",

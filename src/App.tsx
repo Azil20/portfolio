@@ -12,7 +12,8 @@ function DeferredChatbot() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    let timer: ReturnType<typeof setTimeout>;
+    let idleId: number | undefined;
+    let timer: ReturnType<typeof setTimeout> | undefined;
 
     const load = () => {
       setReady(true);
@@ -21,18 +22,32 @@ function DeferredChatbot() {
 
     const cleanup = () => {
       if (timer) clearTimeout(timer);
+      if (idleId && typeof window !== 'undefined' && 'cancelIdleCallback' in window) {
+        (window as any).cancelIdleCallback(idleId);
+      }
       window.removeEventListener('scroll', load);
       window.removeEventListener('pointerdown', load);
+      window.removeEventListener('pointermove', load);
+      window.removeEventListener('touchstart', load);
       window.removeEventListener('keydown', load);
     };
 
-    // Listen for any user engagement before loading heavy 1MB Three.js bundle
+    // Pre-fetch the Chatbot chunk in background right after main thread is idle
+    import('./components/Chatbot');
+
+    // Mount immediately on ANY user interaction
     window.addEventListener('scroll', load, { passive: true, once: true });
     window.addEventListener('pointerdown', load, { passive: true, once: true });
+    window.addEventListener('pointermove', load, { passive: true, once: true });
+    window.addEventListener('touchstart', load, { passive: true, once: true });
     window.addEventListener('keydown', load, { passive: true, once: true });
 
-    // Fallback: mount after 7.5s if the user is sitting idle at the top
-    timer = setTimeout(load, 7500);
+    // Fast-idle trigger: mounts smoothly right after first paint (60-120ms instead of 7.5s delay)
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      idleId = (window as any).requestIdleCallback(load, { timeout: 120 });
+    } else {
+      timer = setTimeout(load, 60);
+    }
 
     return cleanup;
   }, []);

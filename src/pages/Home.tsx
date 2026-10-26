@@ -20,7 +20,9 @@ import {
   Loader2,
   AlertCircle,
   Download,
-  Send
+  Send,
+  Calendar,
+  MapPin
 } from 'lucide-react';
 import Footer from '../components/Footer';
 
@@ -70,6 +72,17 @@ export default function Home() {
   const { scrollYProgress } = useScroll();
   const [isMobile, setIsMobile] = useState(false);
 
+  // Dynamic age calculation based on birth date: June 10, 2004 (10/06/2004)
+  const userAge = (() => {
+    const today = new Date();
+    let age = today.getFullYear() - 2004;
+    const m = today.getMonth() - 5; // Month is 0-indexed (5 = June)
+    if (m < 0 || (m === 0 && today.getDate() < 10)) {
+      age--;
+    }
+    return age;
+  })();
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     handleResize();
@@ -101,7 +114,7 @@ export default function Home() {
   const [formErrorMsg, setFormErrorMsg] = useState('');
 
   const handleCopyEmail = () => {
-    navigator.clipboard.writeText('azilmohamed051@gmail.com');
+    navigator.clipboard.writeText('ailmohamed@outlook.com');
     setCopiedEmail(true);
     setTimeout(() => setCopiedEmail(false), 2500);
   };
@@ -129,7 +142,7 @@ export default function Home() {
           subject: formState.subject.trim() || `Nouveau message de ${formState.name} (Portfolio Mohamed Azil)`,
           message: formState.message.trim(),
           from_name: formState.name.trim(),
-          to_email: 'azilmohamed051@gmail.com',
+          to_email: 'ailmohamed@outlook.com',
           botcheck: ''
         })
       });
@@ -371,6 +384,24 @@ export default function Home() {
               {t('hero.description')}
             </p>
 
+            {/* Quick Profile Meta Strip */}
+            <div className="hero-meta-strip">
+              <span className="hero-meta-item">
+                <Calendar size={14} className="hero-meta-icon" />
+                <span>{t('hero.birthBadge')} ({userAge} {isFrench ? 'ans' : 'y/o'})</span>
+              </span>
+              <span className="hero-meta-sep" aria-hidden="true">•</span>
+              <span className="hero-meta-item">
+                <MapPin size={14} className="hero-meta-icon" />
+                <span>{t('hero.locationBadge')}</span>
+              </span>
+              <span className="hero-meta-sep" aria-hidden="true">•</span>
+              <span className="hero-meta-item">
+                <GraduationCap size={14} className="hero-meta-icon" />
+                <span>{t('hero.educationBadge')}</span>
+              </span>
+            </div>
+
             <div className="hero-cta-group">
               <a href="#projects" className="btn cursor-target" data-cursor-label="Explore">
                 {t('hero.explore')}
@@ -424,8 +455,8 @@ export default function Home() {
                 )}
               </div>
 
-              <a href="mailto:azilmohamed051@gmail.com" className="btn btn-outline hero-email-btn">
-                <Mail size={16} /> azilmohamed051@gmail.com
+              <a href="mailto:ailmohamed@outlook.com" className="btn btn-outline hero-email-btn">
+                <Mail size={16} /> ailmohamed@outlook.com
               </a>
             </div>
           </motion.div>
@@ -768,8 +799,8 @@ export default function Home() {
                     </div>
                     <div className="contact-card-content">
                       <span className="contact-card-label">{t('contact.emailLabel')}</span>
-                      <a href="mailto:azilmohamed051@gmail.com" className="contact-card-val">
-                        azilmohamed051@gmail.com
+                      <a href="mailto:ailmohamed@outlook.com" className="contact-card-val">
+                        ailmohamed@outlook.com
                       </a>
                     </div>
                     <button 
@@ -780,6 +811,22 @@ export default function Home() {
                     >
                       {copiedEmail ? <Check size={16} /> : <Copy size={16} />}
                     </button>
+                  </div>
+
+                  {/* Personal Birth Date & Age Card */}
+                  <div className="contact-card">
+                    <div className="contact-card-icon">
+                      <Calendar size={22} />
+                    </div>
+                    <div className="contact-card-content">
+                      <span className="contact-card-label">{t('contact.birthLabel')}</span>
+                      <span className="contact-card-val">
+                        {t('contact.birthDate')}{' '}
+                        <span className="text-muted" style={{ fontSize: '0.85rem', fontWeight: 400 }}>
+                          • {userAge} {isFrench ? 'ans' : 'years old'}
+                        </span>
+                      </span>
+                    </div>
                   </div>
 
                   <a 
@@ -948,7 +995,7 @@ export default function Home() {
                         <span>{formErrorMsg || t('contact.sentError')}</span>
                       </div>
                       <a 
-                        href={`mailto:azilmohamed051@gmail.com?subject=${encodeURIComponent(formState.subject.trim() || 'Contact Portfolio Mohamed Azil')}&body=${encodeURIComponent(`De: ${formState.name.trim()} (${formState.email.trim()})\n\n${formState.message.trim()}`)}`}
+                        href={`mailto:ailmohamed@outlook.com?subject=${encodeURIComponent(formState.subject.trim() || 'Contact Portfolio Mohamed Azil')}&body=${encodeURIComponent(`De: ${formState.name.trim()} (${formState.email.trim()})\n\n${formState.message.trim()}`)}`}
                         className="form-fallback-mailto-btn"
                         target="_blank"
                         rel="noreferrer"
