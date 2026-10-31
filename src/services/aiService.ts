@@ -26,7 +26,7 @@ Key Information about Mohamed Azil:
   - Téléphone: +212 689 448 142
   - LinkedIn: https://www.linkedin.com/in/mohamed-azil-3b303b365/
   - GitHub: https://github.com/Azil20
-  - Localisation: Maroc (Kénitra / Béni Mellal)
+  - Localisation: Rabat, Maroc (vit et réside à Rabat / lives in Rabat, Morocco)
 - Formations (Education):
   1. Master Big Data, Intelligence Artificielle et Applications Avancées (M2) (2024 — Présent) — Faculté des Sciences (FSK), Université Ibn Tofaïl, Kénitra.
   2. Licence Sciences Mathématiques et Informatiques (SMI) (2024 — 2025) — Faculté des Sciences (FSK), Université Ibn Tofaïl, Kénitra.
@@ -57,6 +57,7 @@ Tone & Personality:
 - CONCISENESS RULE: Keep responses extremely short, concise, and highly useful (maximum 1 to 2 sentences). Give the user exactly what they need to know without filler.
 - Friendly, polished, highly professional, and accurate.
 - If asked about Mohamed's date of birth, age, or birthday ("When was Mohamed born?", "What is his age?", "Quel est son âge ?", "Date de naissance ?"): State accurately in the user's language that Mohamed Azil was born on June 10, 2004 (10/06/2004) in Morocco and specify his age.
+- If asked where Mohamed lives or his location ("Where does Mohamed live?", "Where is he based?", "Où habite Mohamed ?", "Quelle est sa ville ?"): State clearly that Mohamed lives in Rabat, Morocco ("Mohamed habite à Rabat, Maroc"). His university (Ibn Tofaïl) is in Kenitra where he attends his Master's courses, but he resides in Rabat.
 - If asked about hiring, contact, or collaboration, invite them to connect with Mohamed directly (email: ailmohamed@outlook.com, tel: +212 689 448 142).
 - CRITICAL BOUNDARY: If a user asks about anything unrelated to Mohamed Azil (e.g., general programming, math, history, football, etc.), warmly and politely decline. Tell them clearly that you are exclusively here to discuss Mohamed's portfolio, projects, skills, education, and professional experience.`;
 
@@ -183,6 +184,24 @@ function generateKnowledgeFallback(userQuery: string): string {
       return `Mohamed Azil est né le 10 juin 2004 (10/06/2004) au Maroc. Il a actuellement ${age} ans.`;
     }
     return `Mohamed Azil was born on June 10, 2004 (10/06/2004) in Morocco. He is currently ${age} years old.`;
+  }
+
+  if (
+    query.includes('location') ||
+    query.includes('live') ||
+    query.includes('habite') ||
+    query.includes('ville') ||
+    query.includes('city') ||
+    query.includes('rabat') ||
+    query.includes('reside') ||
+    query.includes('réside') ||
+    query.includes('where')
+  ) {
+    const isFrench = query.includes('habite') || query.includes('où') || query.includes('ville') || query.includes('résid');
+    if (isFrench) {
+      return "Mohamed Azil habite à Rabat, Maroc (ses études de Master 2 se déroulent à l'Université Ibn Tofaïl).";
+    }
+    return "Mohamed Azil lives in Rabat, Morocco (currently pursuing his Master's degree at Ibn Tofail University).";
   }
 
   if (query.includes('about') || query.includes('who') || query.includes('mohamed') || query.includes('azil')) {

@@ -21,8 +21,7 @@ import {
   AlertCircle,
   Download,
   Send,
-  Calendar,
-  MapPin
+  Calendar
 } from 'lucide-react';
 import Footer from '../components/Footer';
 
@@ -383,24 +382,6 @@ export default function Home() {
             <p className="text-muted hero-desc">
               {t('hero.description')}
             </p>
-
-            {/* Quick Profile Meta Strip */}
-            <div className="hero-meta-strip">
-              <span className="hero-meta-item">
-                <Calendar size={14} className="hero-meta-icon" />
-                <span>{t('hero.birthBadge')} ({userAge} {isFrench ? 'ans' : 'y/o'})</span>
-              </span>
-              <span className="hero-meta-sep" aria-hidden="true">•</span>
-              <span className="hero-meta-item">
-                <MapPin size={14} className="hero-meta-icon" />
-                <span>{t('hero.locationBadge')}</span>
-              </span>
-              <span className="hero-meta-sep" aria-hidden="true">•</span>
-              <span className="hero-meta-item">
-                <GraduationCap size={14} className="hero-meta-icon" />
-                <span>{t('hero.educationBadge')}</span>
-              </span>
-            </div>
 
             <div className="hero-cta-group">
               <a href="#projects" className="btn cursor-target" data-cursor-label="Explore">
