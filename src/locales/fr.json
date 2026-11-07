@@ -149,8 +149,54 @@
           { "label": "Synchro Réseau", "val": "< 100ms", "desc": "Notifications temps réel WebSockets" },
           { "label": "Gain Médical", "val": "60%", "desc": "Temps d'accueil clinique économisé" }
         ]
+      },
+      "cinematch": {
+        "title": "CineMatch — Moteur Hybride de Recommandation de Films",
+        "badge": "Machine Learning • NLP & SVD",
+        "description": "Moteur de recommandation hybride combinant filtrage basé sur le contenu NLP (TF-IDF & similarité cosinus) et filtrage collaboratif (factorisation matricielle TruncatedSVD) avec application web Flask.",
+        "highlights": "Double moteur NLP cosinus et factorisation matricielle avec portail web interactif et rapports d'évaluation visuels dynamiques",
+        "archOverview": "Architecture de recommandation hybride intégrant l'analyse sémantique du contenu textuel des films TMDB et le filtrage collaboratif par réduction de dimensionnalité TruncatedSVD, servie par une interface web Flask réactive.",
+        "steps": [
+          { "title": "Prétraitement & Ingénierie des Caractéristiques", "desc": "Nettoyage du dataset TMDB 5000 films et fusion des synopsis, genres, réalisateurs et acteurs clés en une 'soupe de métadonnées'." },
+          { "title": "Vectorisation NLP & Similarité Cosinus (TF-IDF)", "desc": "Projection vectorielle TF-IDF de haute dimension et calcul matriciel des similarités sémantiques cosinus entre œuvres cinématographiques." },
+          { "title": "Filtrage Collaboratif par TruncatedSVD", "desc": "Décomposition en valeurs singulières de la matrice creuse utilisateurs-films pour capturer les dimensions latentes de préférences." },
+          { "title": "Moteur Hybride de Scoring & Classement", "desc": "Pondération conjointe de l'affinité sémantique et des facteurs latents collaboratifs pour générer un classement prédictif optimal." },
+          { "title": "Portail Web Flask & Tableaux Analytiques", "desc": "Recherche prédictive en direct, exploration des recommandations, courbes de distribution des genres et variance expliquée SVD." }
+        ],
+        "pillars": [
+          { "label": "Dataset", "val": "5 000+", "desc": "Films TMDB analysés" },
+          { "label": "Facteurs Latents", "val": "50+ SVD", "desc": "Dimensions de factorisation matricielle" },
+          { "label": "Latence", "val": "< 30ms", "desc": "Scoring de recommandation hybride" },
+          { "label": "Architecture", "val": "NLP + SVD", "desc": "Double moteur sémantique et collaboratif" }
+        ]
+      },
+      "soukline": {
+        "title": "SoukLine — Pipeline Streaming Kafka & Détection d'Anomalies",
+        "badge": "Big Data • KRaft Kafka & Streams",
+        "description": "Pipeline distribué de streaming de logs web en temps réel ingérant le trafic Tomcat dans un cluster Kafka KRaft à 3 brokers avec double moteur de calcul comparatif (Kafka Streams vs Concurrence Java) et alertes 5xx.",
+        "highlights": "Double moteur de calcul parallèle benchmarké avec JMeter, tableau de bord console en direct et alerte automatique sur pic d'erreurs HTTP 5xx",
+        "archOverview": "Pipeline Big Data distribué de bout en bout traitant les logs réels d'un site web Spring Boot via un cluster Apache Kafka KRaft à 3 brokers, articulé autour de deux moteurs indépendants comparés en direct pour la détection d'anomalies 5xx.",
+        "steps": [
+          { "title": "Ingestion du Trafic Web Réel (Spring Boot 3.3)", "desc": "Application e-commerce SoukLine générant de vrais logs Tomcat avec mode panne injectable à chaud sur la route /checkout." },
+          { "title": "Collecteur Java Haute Fréquence", "desc": "Démon Java suivant le fichier access.log en continu (tail -f) et publiant chaque événement vers le topic Kafka en <5ms." },
+          { "title": "Cluster Kafka Distribué (3 Brokers KRaft)", "desc": "Cluster Kafka résilient et partitionné fonctionnant sans Zookeeper grâce au consensus moderne KRaft." },
+          { "title": "Double Moteur de Calcul (Streams vs Concurrence)", "desc": "Moteur A (Kafka Streams à fenêtres tumbling de 5s) et Moteur B (Java ExecutorService) calculant en parallèle les ratios d'erreurs." },
+          { "title": "Tableau de Bord Console & Déclenchement d'Alerte", "desc": "Affichage comparatif bord à bord validant l'égalité des métriques et déclenchant une alerte visuelle dès que le taux 5xx dépasse 25%." }
+        ],
+        "pillars": [
+          { "label": "Cluster", "val": "3 Brokers", "desc": "Cluster distribué Apache Kafka KRaft" },
+          { "label": "Fenêtre", "val": "5s Tumbling", "desc": "Agrégation glissante en temps réel" },
+          { "label": "Concordance", "val": "100%", "desc": "Égalité stricte entre les deux moteurs" },
+          { "label": "Benchmark", "val": "JMeter", "desc": "Test de montée en charge et résilience" }
+        ]
       }
-    }
+    },
+    "watch_demo": "Voir Démo Vidéo",
+    "demo_modal_title": "Démonstration Vidéo du Projet",
+    "close_demo": "Fermer la démo",
+    "view_github": "Dépôt GitHub",
+    "demo_badge": "Démonstration Vidéo Interactive • HD",
+    "key_moments": "Temps Forts de la Démonstration"
   },
   "skills": {
     "eyebrow": "03 / Compétences",

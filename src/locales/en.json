@@ -149,8 +149,54 @@
           { "label": "Sync Latency", "val": "< 100ms", "desc": "Real-time WebSocket notifications" },
           { "label": "Intake Gain", "val": "60%", "desc": "Saved on medical intake paperwork" }
         ]
+      },
+      "cinematch": {
+        "title": "CineMatch — Hybrid Movie Recommendation System",
+        "badge": "Machine Learning • NLP & SVD",
+        "description": "Hybrid movie recommendation engine combining Content-Based NLP (TF-IDF & Cosine Similarity) and Collaborative Filtering (TruncatedSVD Matrix Factorization) with an interactive Flask web application.",
+        "highlights": "Dual NLP cosine similarity and latent matrix factorization with interactive web portal and dynamic visual evaluation reports",
+        "archOverview": "A hybrid recommendation engine combining Content-Based semantic analysis on TMDB movie metadata with Collaborative Filtering via TruncatedSVD dimensionality reduction, served through an interactive Flask web portal with real-time analytics.",
+        "steps": [
+          { "title": "Data Preprocessing & Feature Engineering", "desc": "Cleans TMDB 5000 movies dataset, combining plot keywords, director, top cast, and genre tags into unified metadata features." },
+          { "title": "Content-Based NLP Vectorization (TF-IDF)", "desc": "Maps movie metadata soup into high-dimensional TF-IDF vector space to compute pairwise semantic cosine similarity scores." },
+          { "title": "Collaborative Filtering via TruncatedSVD", "desc": "Applies Singular Value Decomposition to factorize sparse user-movie interaction matrices and discover latent taste dimensions." },
+          { "title": "Hybrid Scoring & Ranking Engine", "desc": "Blends semantic content affinity and collaborative matrix predictions into an optimized hybrid ranking score." },
+          { "title": "Flask Interactive Portal & Visual Analytics", "desc": "Provides instant search autocompletion, real-time recommendation querying, genre distribution curves, and SVD variance plots." }
+        ],
+        "pillars": [
+          { "label": "Dataset", "val": "5,000+", "desc": "TMDB movies analyzed" },
+          { "label": "Latent Factors", "val": "50+ SVD", "desc": "Matrix decomposition dimensions" },
+          { "label": "Latency", "val": "< 30ms", "desc": "Hybrid recommendation scoring" },
+          { "label": "Architecture", "val": "NLP + SVD", "desc": "Dual content & collaborative engine" }
+        ]
+      },
+      "soukline": {
+        "title": "SoukLine — Real-Time Kafka Streaming & Anomaly Detection",
+        "badge": "Big Data • KRaft Kafka & Streams",
+        "description": "High-throughput real-time distributed log streaming pipeline ingesting live Tomcat web traffic into a 3-broker KRaft Kafka cluster with dual comparative processing engines (Kafka Streams vs Manual Concurrency) and instant 5xx error alerting.",
+        "highlights": "Dual parallel processing engines benchmarked with JMeter, live terminal dashboard, and instant HTTP 5xx error surge alerting",
+        "archOverview": "End-to-end distributed Big Data pipeline processing live Tomcat web server access logs through a 3-broker Apache Kafka cluster, featuring dual independent aggregation engines (Kafka Streams vs custom Java multi-threading) and real-time 5xx error spike anomaly detection.",
+        "steps": [
+          { "title": "Live E-Commerce Web Ingestion (Spring Boot)", "desc": "SoukLine Spring Boot e-commerce application writing real Tomcat access logs with simulated error-injection failure mode." },
+          { "title": "High-Frequency Tail Java Collector", "desc": "Continuous Java collector daemon tailing the log file and publishing events to Apache Kafka topics with sub-5ms latency." },
+          { "title": "Distributed Kafka Cluster (3 Brokers KRaft)", "desc": "High-throughput fault-tolerant Kafka cluster operating in KRaft consensus mode with zero Zookeeper overhead." },
+          { "title": "Dual Processing Engines (Streams vs Concurrency)", "desc": "Engine A (Kafka Streams tumbling window) and Engine B (Java ExecutorService) concurrently computing per-endpoint error rates." },
+          { "title": "Real-Time Terminal Dashboard & 5xx Alerting", "desc": "Live side-by-side terminal monitoring with automatic threshold breach alert trigger when 5xx errors exceed 25%." }
+        ],
+        "pillars": [
+          { "label": "Cluster", "val": "3 Brokers", "desc": "Apache Kafka KRaft distributed cluster" },
+          { "label": "Window", "val": "5s Tumbling", "desc": "Real-time sliding aggregation window" },
+          { "label": "Validation", "val": "100%", "desc": "Exact concordance between dual engines" },
+          { "label": "Benchmark", "val": "JMeter", "desc": "Load tested under simulated stress traffic" }
+        ]
       }
-    }
+    },
+    "watch_demo": "Watch Demo Video",
+    "demo_modal_title": "Project Video Demonstration",
+    "close_demo": "Close Demo",
+    "view_github": "GitHub Repository",
+    "demo_badge": "Interactive Video Demo • HD",
+    "key_moments": "Demonstration Highlights"
   },
   "skills": {
     "eyebrow": "03 / Skills",

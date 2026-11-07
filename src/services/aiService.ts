@@ -38,6 +38,8 @@ Key Information about Mohamed Azil:
   1. BMA (Compagnon IA Multilingue pour la Santé Mentale): Classifieur DistilBERT fine-tuné + Google Gemini génératif avec basculement automatique multi-modèles, redirection d'urgence (lignes 15/3114), multilingue (Arabe, FR, EN). PyTorch, DistilBERT, Gemini API, Flask, SQLite.
   2. FraudGuard (Détection de Fraude Bancaire): Pipeline ML sur transactions hautement déséquilibrées (0,17% de fraudes), optimisation PR-AUC/ROC-AUC, explicabilité SHAP et web app Flask pour scoring en temps réel. Python, Scikit-Learn, SHAP, Imbalanced ML, Flask.
   3. IntelEJ Medical Center: Plateforme santé full-stack (React 18, Supabase, Tailwind) avec portails Médecin/Patient et assistant intelligent Al-Rāzī (triage trilingue arabe/français/anglais).
+  4. CineMatch (Moteur Hybride de Recommandation de Films): Système de recommandation combinant filtrage basé sur le contenu (TF-IDF & similarité cosinus) et filtrage collaboratif (factorisation matricielle TruncatedSVD) avec interface Flask. Python, Scikit-Learn, TruncatedSVD, TF-IDF, Flask.
+  5. SoukLine (Pipeline Streaming Kafka & Détection d'Anomalies): Pipeline Big Data temps réel ingérant les logs web Tomcat d'un e-commerce Spring Boot dans un cluster Kafka 3 brokers KRaft avec dual moteurs de calcul (Kafka Streams vs Concurrence Java) et alertes 5xx automatiques benchmarkées sous JMeter. Apache Kafka, Kafka Streams, Spring Boot, Java 17, Docker.
 - Compétences:
   - Langages: Python, C++, Java, SQL, TypeScript, JavaScript, Bash, PHP.
   - IA: Deep Learning, Machine Learning, NLP, Transformers, Systèmes Experts, Explicabilité (SHAP), Classification déséquilibrée, PyTorch, Scikit-Learn.
