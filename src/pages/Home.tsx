@@ -1,18 +1,18 @@
 import { useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { motion, useScroll, useTransform, useReducedMotion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { 
-  ArrowDown, 
-  GraduationCap, 
-  Briefcase, 
-  Sparkles, 
-  Mail, 
-  Check, 
-  Copy, 
-  ChevronDown, 
-  ArrowUpRight, 
-  BookOpen, 
-  Award, 
+import {
+  ArrowDown,
+  GraduationCap,
+  Briefcase,
+  Sparkles,
+  Mail,
+  Check,
+  Copy,
+  ChevronDown,
+  ArrowUpRight,
+  BookOpen,
+  Award,
   Phone,
   X,
   Cpu,
@@ -21,7 +21,9 @@ import {
   AlertCircle,
   Download,
   Send,
-  Calendar
+  Calendar,
+  Play,
+  Video
 } from 'lucide-react';
 import Footer from '../components/Footer';
 
@@ -62,11 +64,16 @@ interface ProjectItem {
   steps: ArchitectureStep[];
   pillars: ArchitecturePillar[];
   featured?: boolean;
+  githubUrl: string;
+  demoVideo: string;
+  demoPoster: string;
+  demoKeyPoints: string[];
 }
 
 export default function Home() {
   const { t, i18n } = useTranslation();
   const isFrench = i18n.language?.startsWith('fr');
+  const reducedMotion = useReducedMotion();
   const [cvDropdownOpen, setCvDropdownOpen] = useState(false);
   const { scrollYProgress } = useScroll();
   const [isMobile, setIsMobile] = useState(false);
@@ -89,19 +96,58 @@ export default function Home() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
+  const y = useTransform(scrollYProgress, [0, 0.18], [0, 65]);
 
   // Active Project Architecture Modal
   const [activeArchProject, setActiveArchProject] = useState<ProjectItem | null>(null);
+  // Active Project Video Demo Modal
+  const [activeDemoProject, setActiveDemoProject] = useState<ProjectItem | null>(null);
 
-  // Close modal on Escape key
+  // Close modals on Escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setActiveArchProject(null);
+      if (e.key === 'Escape') {
+        setActiveArchProject(null);
+        setActiveDemoProject(null);
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
+
+  // Keep keyboard focus inside the active dialog and restore it on close.
+  const modalOpen = Boolean(activeArchProject || activeDemoProject);
+  useEffect(() => {
+    if (!modalOpen) return;
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const focusable = () => Array.from(document.querySelectorAll<HTMLElement>(
+      '.arch-modal-dialog button, .arch-modal-dialog a, .demo-modal-dialog button, .demo-modal-dialog a, .demo-modal-dialog video'
+    )).filter(element => element.getClientRects().length > 0);
+    const frame = requestAnimationFrame(() => focusable()[0]?.focus());
+    const trapFocus = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab') return;
+      const elements = focusable();
+      const first = elements[0];
+      const last = elements[elements.length - 1];
+      if (!first) return;
+      if (event.shiftKey && (document.activeElement === first || !elements.includes(document.activeElement as HTMLElement))) {
+        event.preventDefault();
+        last?.focus();
+      } else if (!event.shiftKey && (document.activeElement === last || !elements.includes(document.activeElement as HTMLElement))) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', trapFocus);
+    return () => {
+      cancelAnimationFrame(frame);
+      document.removeEventListener('keydown', trapFocus);
+      document.body.style.overflow = previousOverflow;
+      previousFocus?.focus();
+    };
+  }, [modalOpen]);
 
   // FAQ Accordion State (all closed by default for clean scan)
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -113,9 +159,11 @@ export default function Home() {
   const [formErrorMsg, setFormErrorMsg] = useState('');
 
   const handleCopyEmail = () => {
-    navigator.clipboard.writeText('ailmohamed@outlook.com');
-    setCopiedEmail(true);
-    setTimeout(() => setCopiedEmail(false), 2500);
+    navigator.clipboard.writeText('ailmohamed@outlook.com').then(() => {
+      setCopiedEmail(true);
+      setTimeout(() => setCopiedEmail(false), 2500);
+    }).catch(() => setCopiedEmail(false));
+
   };
 
   const handleSendMessage = async (e: React.FormEvent) => {
@@ -228,8 +276,8 @@ export default function Home() {
 
   const educationCount = journeyItems.filter(item => item.category === 'education').length;
   const internshipCount = journeyItems.filter(item => item.category === 'internship').length;
-  const filteredJourney = timelineFilter === 'all' 
-    ? journeyItems 
+  const filteredJourney = timelineFilter === 'all'
+    ? journeyItems
     : journeyItems.filter(item => item.category === timelineFilter);
 
   const projects: ProjectItem[] = [
@@ -243,6 +291,20 @@ export default function Home() {
       tags: ['PyTorch', 'DistilBERT', 'Gemini API', 'Flask', 'SQLite', t('projects.items.bma.multilingualTag')],
       highlights: t('projects.items.bma.highlights'),
       archOverview: t('projects.items.bma.archOverview'),
+      githubUrl: 'https://github.com/Azil20/bma-mental-health-chatbot',
+      demoVideo: '/videos/bma-demo.mp4',
+      demoPoster: '/videos/posters/bma-demo.jpg',
+      demoKeyPoints: isFrench ? [
+        '00:01 • Classification des émotions et intentions en temps réel (DistilBERT)',
+        '00:07 • Réponse empathique guidée & soutien conversationnel',
+        '00:14 • Interception immédiate des signaux de crise et affichage du 3114',
+        '00:19 • Métriques d\'entraînement et score F1 > 91%'
+      ] : [
+        '00:01 • Real-time emotion & intent classification (DistilBERT)',
+        '00:07 • Empathetic guided conversational response',
+        '00:14 • Zero-lag crisis interceptor triggering helpline resources (3114)',
+        '00:19 • Model convergence curves and F1-score > 91%'
+      ],
       steps: [
         { title: t('projects.items.bma.steps.0.title'), desc: t('projects.items.bma.steps.0.desc') },
         { title: t('projects.items.bma.steps.1.title'), desc: t('projects.items.bma.steps.1.desc') },
@@ -266,6 +328,20 @@ export default function Home() {
       tags: ['Python', 'Scikit-Learn', 'SHAP', 'Imbalanced ML', 'Flask', 'PR-AUC & ROC-AUC'],
       highlights: t('projects.items.fraudguard.highlights'),
       archOverview: t('projects.items.fraudguard.archOverview'),
+      githubUrl: 'https://github.com/Azil20/credit-card-fraud-detection',
+      demoVideo: '/videos/fraudguard-demo.mp4',
+      demoPoster: '/videos/posters/fraudguard-demo.jpg',
+      demoKeyPoints: isFrench ? [
+        '00:04 • Saisie et prédiction en direct sur transaction bancaire',
+        '00:15 • Analyse de probabilité sur données hautement déséquilibrées (0,17%)',
+        '00:27 • Explicabilité SHAP des variables financières V1-V28',
+        '00:44 • Tableaux de bord de scoring et rapports de métriques'
+      ] : [
+        '00:04 • Interactive input and real-time transaction scoring',
+        '00:15 • Probability inference on highly imbalanced credit data (0.17%)',
+        '00:27 • SHAP explainability breakdown of key financial drivers',
+        '00:44 • Executive risk dashboard and performance evaluation'
+      ],
       steps: [
         { title: t('projects.items.fraudguard.steps.0.title'), desc: t('projects.items.fraudguard.steps.0.desc') },
         { title: t('projects.items.fraudguard.steps.1.title'), desc: t('projects.items.fraudguard.steps.1.desc') },
@@ -289,6 +365,20 @@ export default function Home() {
       tags: ['React 18', 'TypeScript', 'Tailwind CSS', 'Supabase', 'Assistant Al-Rāzī', 'Triage Médical'],
       highlights: t('projects.items.intelej.highlights'),
       archOverview: t('projects.items.intelej.archOverview'),
+      githubUrl: 'https://github.com/Azil20/intel-ai-care-hub',
+      demoVideo: '/videos/intelej-demo.mp4',
+      demoPoster: '/videos/posters/intelej-demo.jpg',
+      demoKeyPoints: isFrench ? [
+        '00:02 • Portail clinique et tableaux de bord avec sécurité Postgres RLS',
+        '00:07 • Dialogue d\'accueil et pré-diagnostic avec l\'assistant Al-Rāzī',
+        '00:12 • Prise de rendez-vous et synchronisation WebSocket temps réel',
+        '00:17 • Dossier patient électronique et synthèse automatisée'
+      ] : [
+        '00:02 • Clinical portal dashboards with Postgres Row-Level Security',
+        '00:07 • Conversational intake and symptom triage via Al-Rāzī assistant',
+        '00:12 • Appointment scheduling with sub-100ms WebSocket sync',
+        '00:17 • Electronic health records (EHR) with automated intake summary'
+      ],
       steps: [
         { title: t('projects.items.intelej.steps.0.title'), desc: t('projects.items.intelej.steps.0.desc') },
         { title: t('projects.items.intelej.steps.1.title'), desc: t('projects.items.intelej.steps.1.desc') },
@@ -301,6 +391,80 @@ export default function Home() {
         { label: t('projects.items.intelej.pillars.1.label'), val: t('projects.items.intelej.pillars.1.val'), desc: t('projects.items.intelej.pillars.1.desc') },
         { label: t('projects.items.intelej.pillars.2.label'), val: t('projects.items.intelej.pillars.2.val'), desc: t('projects.items.intelej.pillars.2.desc') },
         { label: t('projects.items.intelej.pillars.3.label'), val: t('projects.items.intelej.pillars.3.val'), desc: t('projects.items.intelej.pillars.3.desc') }
+      ]
+    },
+    {
+      id: 'cinematch',
+      title: t('projects.items.cinematch.title'),
+      badge: t('projects.items.cinematch.badge', 'Machine Learning • NLP & SVD'),
+      subtitle: 'Python, Scikit-Learn, TruncatedSVD, TF-IDF, Flask, Pandas',
+      description: t('projects.items.cinematch.description'),
+      tags: ['Python', 'Scikit-Learn', 'TruncatedSVD', 'TF-IDF', 'Cosine Similarity', 'Flask', 'TMDB 5000'],
+      highlights: t('projects.items.cinematch.highlights'),
+      archOverview: t('projects.items.cinematch.archOverview'),
+      githubUrl: 'https://github.com/Azil20/movie-recommendation-system',
+      demoVideo: '/videos/cinematch-demo.mp4',
+      demoPoster: '/videos/posters/cinematch-demo.jpg',
+      demoKeyPoints: isFrench ? [
+        '00:04 • Saisie et recherche en temps réel par film ou mots-clés',
+        '00:12 • Calcul hybride : similarité sémantique cosinus + factorisation SVD',
+        '00:20 • Affichage dynamique des recommandations avec score de correspondance',
+        '00:26 • Visualisation des courbes de distribution des genres et variance SVD'
+      ] : [
+        '00:04 • Real-time search query and metadata autocompletion',
+        '00:12 • Hybrid scoring: Content NLP cosine similarity + Latent SVD matrix',
+        '00:20 • Dynamic recommendation cards with match confidence percentages',
+        '00:26 • Analytics dashboard displaying genre distributions and SVD variance'
+      ],
+      steps: [
+        { title: t('projects.items.cinematch.steps.0.title'), desc: t('projects.items.cinematch.steps.0.desc') },
+        { title: t('projects.items.cinematch.steps.1.title'), desc: t('projects.items.cinematch.steps.1.desc') },
+        { title: t('projects.items.cinematch.steps.2.title'), desc: t('projects.items.cinematch.steps.2.desc') },
+        { title: t('projects.items.cinematch.steps.3.title'), desc: t('projects.items.cinematch.steps.3.desc') },
+        { title: t('projects.items.cinematch.steps.4.title'), desc: t('projects.items.cinematch.steps.4.desc') }
+      ],
+      pillars: [
+        { label: t('projects.items.cinematch.pillars.0.label'), val: t('projects.items.cinematch.pillars.0.val'), desc: t('projects.items.cinematch.pillars.0.desc') },
+        { label: t('projects.items.cinematch.pillars.1.label'), val: t('projects.items.cinematch.pillars.1.val'), desc: t('projects.items.cinematch.pillars.1.desc') },
+        { label: t('projects.items.cinematch.pillars.2.label'), val: t('projects.items.cinematch.pillars.2.val'), desc: t('projects.items.cinematch.pillars.2.desc') },
+        { label: t('projects.items.cinematch.pillars.3.label'), val: t('projects.items.cinematch.pillars.3.val'), desc: t('projects.items.cinematch.pillars.3.desc') }
+      ]
+    },
+    {
+      id: 'soukline',
+      title: t('projects.items.soukline.title'),
+      badge: t('projects.items.soukline.badge', 'Big Data • KRaft Kafka & Streams'),
+      subtitle: 'Apache Kafka, Kafka Streams, Spring Boot 3.3, Java 17, Docker, JMeter',
+      description: t('projects.items.soukline.description'),
+      tags: ['Apache Kafka', 'Kafka Streams', 'Spring Boot 3.3', 'Java 17', 'Docker', 'KRaft', 'JMeter'],
+      highlights: t('projects.items.soukline.highlights'),
+      archOverview: t('projects.items.soukline.archOverview'),
+      githubUrl: 'https://github.com/Azil20/streaming-logs-kafka',
+      demoVideo: '/videos/soukline-demo.mp4',
+      demoPoster: '/videos/posters/soukline-demo.jpg',
+      demoKeyPoints: isFrench ? [
+        '00:02 • Navigation e-commerce réelle et streaming continu des logs web',
+        '00:07 • Cluster Kafka 3 brokers KRaft et double moteur comparatif (Streams vs Java)',
+        '00:13 • Injection à chaud du mode panne générant des erreurs HTTP 503',
+        '00:19 • Déclenchement automatique de l\'alerte 5xx et rétablissement du trafic'
+      ] : [
+        '00:02 • Real e-commerce web browsing and continuous Tomcat log streaming',
+        '00:07 • 3-broker KRaft Kafka cluster and dual engines (Streams vs Java concurrency)',
+        '00:13 • Hot failure mode injection triggering HTTP 503 errors on /checkout',
+        '00:19 • Automatic 5xx threshold breach alert trigger and service restoration'
+      ],
+      steps: [
+        { title: t('projects.items.soukline.steps.0.title'), desc: t('projects.items.soukline.steps.0.desc') },
+        { title: t('projects.items.soukline.steps.1.title'), desc: t('projects.items.soukline.steps.1.desc') },
+        { title: t('projects.items.soukline.steps.2.title'), desc: t('projects.items.soukline.steps.2.desc') },
+        { title: t('projects.items.soukline.steps.3.title'), desc: t('projects.items.soukline.steps.3.desc') },
+        { title: t('projects.items.soukline.steps.4.title'), desc: t('projects.items.soukline.steps.4.desc') }
+      ],
+      pillars: [
+        { label: t('projects.items.soukline.pillars.0.label'), val: t('projects.items.soukline.pillars.0.val'), desc: t('projects.items.soukline.pillars.0.desc') },
+        { label: t('projects.items.soukline.pillars.1.label'), val: t('projects.items.soukline.pillars.1.val'), desc: t('projects.items.soukline.pillars.1.desc') },
+        { label: t('projects.items.soukline.pillars.2.label'), val: t('projects.items.soukline.pillars.2.val'), desc: t('projects.items.soukline.pillars.2.desc') },
+        { label: t('projects.items.soukline.pillars.3.label'), val: t('projects.items.soukline.pillars.3.val'), desc: t('projects.items.soukline.pillars.3.desc') }
       ]
     }
   ];
@@ -359,11 +523,11 @@ export default function Home() {
     <>
 
 
-      <main id="top">
+      <main id="top" tabIndex={-1}>
         {/* Hero Section */}
         <section className="hero-section" id="hero">
-          <motion.div 
-            style={{ y: isMobile ? 0 : y }}
+          <motion.div
+            style={{ y: isMobile || reducedMotion ? 0 : y }}
             initial={{ opacity: 1, y: 0 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
@@ -373,7 +537,7 @@ export default function Home() {
               <span className="status-indicator-dot pulse"></span>
               <span>{t('hero.status')}</span>
             </div>
-            
+
             <h1 className="display-title">
               Mohamed <br />
               <span className="chrome-text">Azil</span>
@@ -393,8 +557,8 @@ export default function Home() {
 
               {/* CV Download Dropdown */}
               <div className="hero-cv-dropdown-wrapper">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="btn btn-outline hero-cv-btn cursor-target"
                   data-cursor-label="Resume"
                   onClick={() => setCvDropdownOpen(!cvDropdownOpen)}
@@ -406,8 +570,8 @@ export default function Home() {
                 </button>
                 {cvDropdownOpen && (
                   <div className="hero-cv-dropdown-menu">
-                    <a 
-                      href="/CV_Mohamed_Azil_EN.pdf" 
+                    <a
+                      href="/CV_Mohamed_Azil_EN.pdf"
                       download="CV_Mohamed_AZIL_EN.pdf"
                       className="hero-cv-dropdown-item"
                       onClick={() => setCvDropdownOpen(false)}
@@ -419,8 +583,8 @@ export default function Home() {
                       </div>
                       <Download size={14} />
                     </a>
-                    <a 
-                      href="/CV_Mohamed_Azil_FR.pdf" 
+                    <a
+                      href="/CV_Mohamed_Azil_FR.pdf"
                       download="CV_Mohamed_AZIL_FR.pdf"
                       className="hero-cv-dropdown-item"
                       onClick={() => setCvDropdownOpen(false)}
@@ -445,7 +609,7 @@ export default function Home() {
           <div style={{ position: 'absolute', bottom: '22px', left: '50%', transform: 'translateX(-50%)' }}>
             <motion.a
               href="#experiences"
-              animate={{ y: [0, 8, 0] }}
+              animate={reducedMotion ? undefined : { y: [0, 6, 0] }}
               transition={{ repeat: Infinity, duration: 2 }}
               aria-label="Scroll down to Journey"
             >
@@ -454,10 +618,11 @@ export default function Home() {
           </div>
         </section>
 
+
         {/* 1. Experiences Section */}
         <section className="section" id="experiences">
           <div className="container">
-            <motion.div 
+            <motion.div
               className="section-header"
               initial={{ opacity: 0, y: 28 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -473,21 +638,21 @@ export default function Home() {
 
             {/* Filter Tabs */}
             <div className="timeline-filter-tabs">
-              <button 
+              <button
                 type="button"
                 className={`timeline-tab-btn ${timelineFilter === 'all' ? 'active' : ''}`}
                 onClick={() => setTimelineFilter('all')}
               >
                 {t('journey.filters.all')} <span className="tab-count-pill">{journeyItems.length}</span>
               </button>
-              <button 
+              <button
                 type="button"
                 className={`timeline-tab-btn ${timelineFilter === 'education' ? 'active' : ''}`}
                 onClick={() => setTimelineFilter('education')}
               >
                 <GraduationCap size={16} /> {t('journey.filters.education')} ({educationCount})
               </button>
-              <button 
+              <button
                 type="button"
                 className={`timeline-tab-btn ${timelineFilter === 'internship' ? 'active' : ''}`}
                 onClick={() => setTimelineFilter('internship')}
@@ -499,8 +664,8 @@ export default function Home() {
             <div className="timeline-container">
               <AnimatePresence mode="popLayout">
                 {filteredJourney.map((item, idx) => (
-                  <motion.div 
-                    key={item.id} 
+                  <motion.div
+                    key={item.id}
                     className="timeline-item"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -541,7 +706,7 @@ export default function Home() {
         {/* 2. Projects Section */}
         <section className="section" id="projects" style={{ background: 'var(--accent-color)' }}>
           <div className="container">
-            <motion.div 
+            <motion.div
               className="section-header"
               initial={{ opacity: 0, y: 28 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -557,22 +722,20 @@ export default function Home() {
 
             <div className="projects-grid">
               {projects.map((proj, idx) => (
-                <motion.div 
-                  key={proj.id} 
+                <motion.div
+                  key={proj.id}
                   className={`project-card ${proj.featured ? 'featured' : ''}`}
                   initial={{ opacity: 0, y: 32, scale: 0.98 }}
                   whileInView={{ opacity: 1, y: 0, scale: 1 }}
                   viewport={{ once: true, margin: "-40px" }}
                   transition={{ duration: 0.52, delay: idx * 0.1, ease: [0.16, 1, 0.3, 1] }}
-                  onClick={() => setActiveArchProject(proj)}
                   tabIndex={0}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault();
-                      setActiveArchProject(proj);
+                      setActiveDemoProject(proj);
                     }
                   }}
-                  title={t('projects.view_architecture')}
                 >
                   <div className="project-header">
                     <div className="project-badges-group">
@@ -584,6 +747,33 @@ export default function Home() {
                       )}
                     </div>
                     <span className="project-index">0{idx + 1}</span>
+                  </div>
+
+                  {/* Video Demo Interactive Preview Banner */}
+                  <div
+                    className="project-demo-banner"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveDemoProject(proj);
+                    }}
+                    title={t('projects.watch_demo')}
+                  >
+                    <img
+                      src={proj.demoPoster}
+                      alt={`${proj.title} Demo Poster`}
+                      className="project-demo-poster-img"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <div className="project-demo-banner-overlay">
+                      <div className="project-demo-play-btn">
+                        <Play size={18} fill="currentColor" />
+                      </div>
+                      <span className="project-demo-banner-label">
+                        <Video size={13} />
+                        {t('projects.watch_demo')}
+                      </span>
+                    </div>
                   </div>
 
                   <h3 className="project-title">{proj.title}</h3>
@@ -601,11 +791,46 @@ export default function Home() {
                     ))}
                   </div>
 
-                  {/* Visual trigger indicating architecture can be opened */}
-                  <div className="project-arch-cta">
-                    <Cpu size={16} />
-                    <span>{t('projects.view_architecture')}</span>
-                    <ArrowUpRight size={16} />
+                  {/* Modern Engineering Actions */}
+                  <div className="project-card-actions">
+                    <button
+                      type="button"
+                      className="project-action-btn project-action-demo"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveDemoProject(proj);
+                      }}
+                      title={t('projects.watch_demo')}
+                    >
+                      <Play size={14} fill="currentColor" />
+                      <span>{t('projects.watch_demo')}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      className="project-action-btn project-action-arch"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveArchProject(proj);
+                      }}
+                      title={t('projects.view_architecture')}
+                    >
+                      <Cpu size={14} />
+                      <span>{t('projects.view_architecture')}</span>
+                    </button>
+
+                    <a
+                      href={proj.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="project-action-btn project-action-github"
+                      onClick={(e) => e.stopPropagation()}
+                      title={t('projects.view_github')}
+                      aria-label={`${proj.title} GitHub`}
+                    >
+                      <GithubIcon size={16} />
+                      <ArrowUpRight size={13} />
+                    </a>
                   </div>
                 </motion.div>
               ))}
@@ -616,7 +841,7 @@ export default function Home() {
         {/* 3. Skills & Compétences Section */}
         <section className="section" id="skills">
           <div className="container">
-            <motion.div 
+            <motion.div
               className="section-header"
               initial={{ opacity: 0, y: 28 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -632,8 +857,8 @@ export default function Home() {
 
             <div className="skills-grid">
               {skillGroups.map((group, idx) => (
-                <motion.div 
-                  key={idx} 
+                <motion.div
+                  key={idx}
                   className="skill-category-card"
                   initial={{ opacity: 0, y: 24, scale: 0.98 }}
                   whileInView={{ opacity: 1, y: 0, scale: 1 }}
@@ -655,8 +880,8 @@ export default function Home() {
         {/* 4. FAQ Section */}
         <section className="section" id="faq">
           <div className="container" style={{ maxWidth: '960px' }}>
-            <motion.div 
-              className="section-header" 
+            <motion.div
+              className="section-header"
               style={{ textAlign: 'center', margin: '0 auto 2.25rem auto' }}
               initial={{ opacity: 0, y: 28 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -674,44 +899,44 @@ export default function Home() {
               {faqs.map((faq, idx) => {
                 const isOpen = openFaq === idx;
                 return (
-                  <motion.div 
-                    key={idx} 
+                  <motion.div
+                    key={idx}
                     className={`faq-item ${isOpen ? 'active' : ''}`}
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-30px" }}
                     transition={{ duration: 0.42, delay: idx * 0.05, ease: [0.16, 1, 0.3, 1] }}
                   >
-                    <button 
+                    <button
                       type="button"
-                      className="faq-question-btn" 
+                      className="faq-question-btn"
                       aria-expanded={isOpen}
                       aria-controls={`faq-answer-${idx}`}
                       onClick={() => setOpenFaq(isOpen ? null : idx)}
                     >
                       <span className="faq-question-text">{faq.question}</span>
-                      <ChevronDown 
-                        size={20} 
-                        className={`faq-chevron ${isOpen ? 'rotate' : ''}`} 
+                      <ChevronDown
+                        size={20}
+                        className={`faq-chevron ${isOpen ? 'rotate' : ''}`}
                         aria-hidden="true"
                       />
                     </button>
-                    
+
                     <AnimatePresence initial={false}>
                       {isOpen && (
                         <motion.div
                           key="faq-answer-content"
                           initial={{ height: 0, opacity: 0 }}
-                          animate={{ 
-                            height: 'auto', 
+                          animate={{
+                            height: 'auto',
                             opacity: 1,
                             transition: {
                               height: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
                               opacity: { duration: 0.25, ease: [0.16, 1, 0.3, 1] }
                             }
                           }}
-                          exit={{ 
-                            height: 0, 
+                          exit={{
+                            height: 0,
                             opacity: 0,
                             transition: {
                               height: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
@@ -737,7 +962,7 @@ export default function Home() {
         {/* 5. Reach Out Section */}
         <section className="section" id="reach-out" style={{ borderTop: '1px solid var(--border-color)' }}>
           <div className="container">
-            <motion.div 
+            <motion.div
               className="section-header"
               initial={{ opacity: 0, y: 28 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -753,7 +978,7 @@ export default function Home() {
 
             <div className="reachout-grid">
               {/* Direct channels & info */}
-              <motion.div 
+              <motion.div
                 className="reachout-channels"
                 initial={{ opacity: 0, y: 28 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -784,8 +1009,8 @@ export default function Home() {
                         ailmohamed@outlook.com
                       </a>
                     </div>
-                    <button 
-                      onClick={handleCopyEmail} 
+                    <button
+                      onClick={handleCopyEmail}
                       className="contact-action-btn"
                       aria-label={t('contact.copyEmail')}
                       title={copiedEmail ? t('contact.copied') : t('contact.copyEmail')}
@@ -810,8 +1035,8 @@ export default function Home() {
                     </div>
                   </div>
 
-                  <a 
-                    href="tel:+212689448142" 
+                  <a
+                    href="tel:+212689448142"
                     className="contact-card clickable"
                   >
                     <div className="contact-card-icon">
@@ -824,10 +1049,10 @@ export default function Home() {
                     <ArrowUpRight size={18} className="text-muted" />
                   </a>
 
-                  <a 
-                    href="https://www.linkedin.com/in/mohamed-azil-3b303b365/" 
-                    target="_blank" 
-                    rel="noreferrer" 
+                  <a
+                    href="https://www.linkedin.com/in/mohamed-azil-3b303b365/"
+                    target="_blank"
+                    rel="noreferrer"
                     className="contact-card clickable"
                   >
                     <div className="contact-card-icon">
@@ -840,10 +1065,10 @@ export default function Home() {
                     <ArrowUpRight size={18} className="text-muted" />
                   </a>
 
-                  <a 
-                    href="https://github.com/Azil20" 
-                    target="_blank" 
-                    rel="noreferrer" 
+                  <a
+                    href="https://github.com/Azil20"
+                    target="_blank"
+                    rel="noreferrer"
                     className="contact-card clickable"
                   >
                     <div className="contact-card-icon">
@@ -864,8 +1089,8 @@ export default function Home() {
                     <div className="contact-card-content" style={{ width: '100%' }}>
                       <span className="contact-card-label">Curriculum Vitae</span>
                       <div className="contact-cv-actions">
-                        <a 
-                          href="/CV_Mohamed_Azil_EN.pdf" 
+                        <a
+                          href="/CV_Mohamed_Azil_EN.pdf"
                           download="CV_Mohamed_AZIL_EN.pdf"
                           className="contact-cv-badge-btn"
                           title="Download English Resume (PDF)"
@@ -873,8 +1098,8 @@ export default function Home() {
                           <Download size={13} />
                           <span>English (PDF)</span>
                         </a>
-                        <a 
-                          href="/CV_Mohamed_Azil_FR.pdf" 
+                        <a
+                          href="/CV_Mohamed_Azil_FR.pdf"
                           download="CV_Mohamed_AZIL_FR.pdf"
                           className="contact-cv-badge-btn"
                           title="Télécharger CV Français (PDF)"
@@ -890,7 +1115,7 @@ export default function Home() {
               </motion.div>
 
               {/* Interactive Contact Form */}
-              <motion.div 
+              <motion.div
                 className="reachout-form-wrapper"
                 initial={{ opacity: 0, y: 28 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -900,11 +1125,11 @@ export default function Home() {
                 <form className="contact-form" onSubmit={handleSendMessage}>
                   <div className="form-group">
                     <label htmlFor="name" className="form-label">{t('contact.nameLabel')}</label>
-                    <input 
-                      type="text" 
-                      id="name" 
-                      required 
-                      className="form-input" 
+                    <input
+                      type="text"
+                      id="name"
+                      required
+                      className="form-input"
                       placeholder={t('contact.namePlaceholder')}
                       value={formState.name}
                       onChange={(e) => setFormState({ ...formState, name: e.target.value })}
@@ -913,11 +1138,11 @@ export default function Home() {
 
                   <div className="form-group">
                     <label htmlFor="email" className="form-label">{t('contact.emailFieldLabel')}</label>
-                    <input 
-                      type="email" 
-                      id="email" 
-                      required 
-                      className="form-input" 
+                    <input
+                      type="email"
+                      id="email"
+                      required
+                      className="form-input"
                       placeholder={t('contact.emailPlaceholder')}
                       value={formState.email}
                       onChange={(e) => setFormState({ ...formState, email: e.target.value })}
@@ -926,10 +1151,10 @@ export default function Home() {
 
                   <div className="form-group">
                     <label htmlFor="subject" className="form-label">{t('contact.subjectLabel')}</label>
-                    <input 
-                      type="text" 
-                      id="subject" 
-                      className="form-input" 
+                    <input
+                      type="text"
+                      id="subject"
+                      className="form-input"
                       placeholder={t('contact.subjectPlaceholder')}
                       value={formState.subject}
                       onChange={(e) => setFormState({ ...formState, subject: e.target.value })}
@@ -938,20 +1163,20 @@ export default function Home() {
 
                   <div className="form-group">
                     <label htmlFor="message" className="form-label">{t('contact.messageLabel')}</label>
-                    <textarea 
-                      id="message" 
-                      rows={4} 
-                      required 
-                      className="form-input" 
+                    <textarea
+                      id="message"
+                      rows={4}
+                      required
+                      className="form-input"
                       placeholder={t('contact.messagePlaceholder')}
                       value={formState.message}
                       onChange={(e) => setFormState({ ...formState, message: e.target.value })}
                     />
                   </div>
 
-                  <button 
-                    type="submit" 
-                    className="btn form-submit-btn" 
+                  <button
+                    type="submit"
+                    className="btn form-submit-btn"
                     disabled={formStatus === 'sending' || formStatus === 'success'}
                   >
                     {formStatus === 'sending' ? (
@@ -975,7 +1200,7 @@ export default function Home() {
                         <AlertCircle size={16} style={{ flexShrink: 0 }} />
                         <span>{formErrorMsg || t('contact.sentError')}</span>
                       </div>
-                      <a 
+                      <a
                         href={`mailto:ailmohamed@outlook.com?subject=${encodeURIComponent(formState.subject.trim() || 'Contact Portfolio Mohamed Azil')}&body=${encodeURIComponent(`De: ${formState.name.trim()} (${formState.email.trim()})\n\n${formState.message.trim()}`)}`}
                         className="form-fallback-mailto-btn"
                         target="_blank"
@@ -1083,10 +1308,149 @@ export default function Home() {
                 <div className="arch-modal-footer">
                   <button
                     type="button"
+                    className="btn btn-primary arch-switch-demo-btn"
+                    onClick={() => {
+                      const p = activeArchProject;
+                      setActiveArchProject(null);
+                      setActiveDemoProject(p);
+                    }}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
+                  >
+                    <Play size={16} fill="currentColor" />
+                    <span>{t('projects.watch_demo')}</span>
+                  </button>
+
+                  <a
+                    href={activeArchProject.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-outline"
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
+                  >
+                    <GithubIcon size={16} />
+                    <span>{t('projects.view_github')}</span>
+                    <ArrowUpRight size={14} />
+                  </a>
+
+                  <button
+                    type="button"
                     className="btn btn-outline"
                     onClick={() => setActiveArchProject(null)}
                   >
                     {t('projects.close_architecture')}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Interactive Video Demonstration Modal */}
+      <AnimatePresence>
+        {activeDemoProject && (
+          <motion.div
+            className="demo-modal-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setActiveDemoProject(null)}
+          >
+            <motion.div
+              className="demo-modal-dialog"
+              initial={{ scale: 0.94, opacity: 0, y: 25 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.94, opacity: 0, y: 25 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                className="demo-modal-close"
+                onClick={() => setActiveDemoProject(null)}
+                aria-label={t('projects.close_demo')}
+                title={t('projects.close_demo')}
+              >
+                <X size={20} />
+              </button>
+
+              <div className="demo-modal-body">
+                <div className="demo-modal-header">
+                  <div className="demo-modal-meta">
+                    <span className="project-badge">{activeDemoProject.badge}</span>
+                    <span className="demo-live-badge">
+                      <span className="demo-live-dot" />
+                      {t('projects.demo_badge')}
+                    </span>
+                  </div>
+                  <h2 className="demo-modal-title">{activeDemoProject.title}</h2>
+                  <p className="demo-modal-subtitle">{activeDemoProject.subtitle}</p>
+                </div>
+
+                {/* Video Player Container */}
+                <div className="demo-player-container">
+                  <video
+                    key={activeDemoProject.id}
+                    src={activeDemoProject.demoVideo}
+                    poster={activeDemoProject.demoPoster}
+                    controls
+                    autoPlay
+                    playsInline
+                    className="demo-html5-video"
+                  >
+                    Your browser does not support HTML5 video.
+                  </video>
+                </div>
+
+                {/* Demonstration Highlights & Checkpoints */}
+                <div className="demo-keypoints-section">
+                  <div className="demo-keypoints-title">
+                    <Sparkles size={16} style={{ color: '#38bdf8' }} />
+                    <span>{t('projects.key_moments')}</span>
+                  </div>
+                  <div className="demo-keypoints-grid">
+                    {activeDemoProject.demoKeyPoints.map((point, pIdx) => (
+                      <div key={pIdx} className="demo-keypoint-item">
+                        <span className="demo-keypoint-dot" />
+                        <span className="demo-keypoint-text">{point}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Modal Footer with Actions */}
+                <div className="demo-modal-footer">
+                  <button
+                    type="button"
+                    className="btn btn-outline"
+                    onClick={() => {
+                      const p = activeDemoProject;
+                      setActiveDemoProject(null);
+                      setActiveArchProject(p);
+                    }}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
+                  >
+                    <Cpu size={16} />
+                    <span>{t('projects.view_architecture')}</span>
+                  </button>
+
+                  <a
+                    href={activeDemoProject.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-outline"
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
+                  >
+                    <GithubIcon size={16} />
+                    <span>{t('projects.view_github')}</span>
+                    <ArrowUpRight size={14} />
+                  </a>
+
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={() => setActiveDemoProject(null)}
+                  >
+                    {t('projects.close_demo')}
                   </button>
                 </div>
               </div>
