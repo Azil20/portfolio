@@ -1,5 +1,6 @@
 
 import { lazy, Suspense, useState, useEffect } from 'react';
+import { MotionConfig } from 'framer-motion';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navigation from './components/Navigation';
 import Home from './pages/Home';
@@ -32,21 +33,15 @@ function DeferredChatbot() {
       window.removeEventListener('keydown', load);
     };
 
-    // Pre-fetch the Chatbot chunk in background right after main thread is idle
-    import('./components/Chatbot');
-
-    // Mount immediately on ANY user interaction
-    window.addEventListener('scroll', load, { passive: true, once: true });
+    // Keep the initial render free of the assistant's animation and AI modules.
     window.addEventListener('pointerdown', load, { passive: true, once: true });
-    window.addEventListener('pointermove', load, { passive: true, once: true });
-    window.addEventListener('touchstart', load, { passive: true, once: true });
-    window.addEventListener('keydown', load, { passive: true, once: true });
-
-    // Fast-idle trigger: mounts smoothly right after first paint (60-120ms instead of 7.5s delay)
-    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-      idleId = (window as any).requestIdleCallback(load, { timeout: 120 });
+    window.addEventListener('keydown', load, { once: true });
+    if ('requestIdleCallback' in window) {
+      timer = setTimeout(() => {
+        idleId = window.requestIdleCallback(load, { timeout: 3000 });
+      }, 3500);
     } else {
-      timer = setTimeout(load, 60);
+      timer = setTimeout(load, 5000);
     }
 
     return cleanup;
@@ -105,13 +100,15 @@ function App() {
 
   useEffect(() => {
     // Only load and initialize TargetCursor on devices with actual mouse / fine pointer hardware
-    if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)').matches) {
       setEnableDesktopCursor(true);
     }
   }, []);
 
   return (
+    <MotionConfig reducedMotion="user">
     <Router>
+      <a className="skip-link" href="#top">Skip to content</a>
       {enableDesktopCursor && (
         <Suspense fallback={null}>
           <TargetCursor
@@ -131,6 +128,7 @@ function App() {
       </Routes>
       <DeferredChatbot />
     </Router>
+    </MotionConfig>
   );
 }
 

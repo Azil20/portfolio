@@ -1673,7 +1673,7 @@ export default function Chatbot() {
           title={isOpen ? "Click to minimize chat" : "Click to chat with Med"}
           style={{ zIndex: 1000 }}
         >
-          <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
+          <Canvas dpr={[1, 1.5]} gl={{ powerPreference: 'low-power' }} camera={{ position: [0, 0, 5], fov: 45 }}>
             <ambientLight intensity={1} />
             <directionalLight position={[10, 10, 10]} intensity={2} />
             <Suspense fallback={null}>
